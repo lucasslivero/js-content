@@ -1,27 +1,32 @@
-const path = require('path');
-const htmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require("path");
+const htmlWebpackPlugin = require("html-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
-  mode: 'development',
-  entry: path.resolve(__dirname, 'src', 'index.js'),
+  mode: "development",
+  entry: path.resolve(__dirname, "src", "index.js"),
   output: {
-    path: path.resolve(__dirname, 'build'),
-    filename: 'bundle[fullhash].js'
+    path: path.resolve(__dirname, "build"),
+    filename: "bundle[fullhash].js",
+    publicPath: "/",
   },
   plugins: [
     new htmlWebpackPlugin({
-      template: path.resolve(__dirname, 'public', 'index.html')
+      template: path.resolve(__dirname, "public", "index.html"),
     }),
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
   ],
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: 'babel-loader'
-      }
-    ]
-  }
-}
+        use: "babel-loader",
+      },
+    ],
+  },
+  devServer: {
+    port: 3000,
+    historyApiFallback: true,
+  },
+};

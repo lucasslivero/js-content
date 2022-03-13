@@ -7,4 +7,5 @@ export default {
   headerBackground: "#aaa",
   footerBackground: "#aaa",
   postBackground: "#ddd",
+  navigationBackground: "#bbb",
 };

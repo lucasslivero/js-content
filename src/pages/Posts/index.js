@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Container } from "./styles";
-import Post from "./Post";
+import Post from "./../../Components/Post";
 
 const posts = [
   { id: Math.random(), title: "Title 01", subtitle: "Subtitle 01", likes: 10 },
@@ -9,7 +9,7 @@ const posts = [
   { id: Math.random(), title: "Title 03", subtitle: "Subtitle 03", likes: 20 },
 ];
 
-function PostList() {
+function Posts() {
   return (
     <Container>
       {posts.map((post) => (
@@ -26,4 +26,4 @@ function PostList() {
   );
 }
 
-export default PostList;
+export default Posts;
