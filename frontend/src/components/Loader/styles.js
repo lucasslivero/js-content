@@ -43,6 +43,7 @@ export const Overlay = styled.div`
   background: rgba(246, 245, 252, 0.7);
   align-items: center;
   justify-content: center;
+  display: flex;
 
   .loader {
   color: ${({ theme }) => theme.colors.primary.main};
