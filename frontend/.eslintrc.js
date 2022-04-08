@@ -20,5 +20,6 @@ module.exports = {
     'class-methods-use-this': 'off',
     'react/no-unescaped-entities': 'off',
     'react/jsx-one-expression-per-line': 'off',
+    'no-empty': ['error', { allowEmptyCatch: true }],
   },
 };

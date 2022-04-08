@@ -1,4 +1,5 @@
 import APIError from '../../errors/APIError';
+import delay from '../../utils/delay';
 
 class HttpClient {
   constructor(baseUrl = 'http://localhost:3002') {
@@ -6,6 +7,7 @@ class HttpClient {
   }
 
   async get(path) {
+    await delay(2.5);
     const response = await fetch(`${this.baseUrl}${path}`);
 
     let body = null;
