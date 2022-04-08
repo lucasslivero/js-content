@@ -12,23 +12,13 @@ export default {
       main: '#FC5050',
       dark: '#F63131',
     },
-    input: {
-      background: '#fff',
-      placeholder: '#BCBCBC',
+    gray: {
+      900: '#222222',
+      200: '#BCBCBC',
+      100: '#E5E5E5',
     },
-    text: {
-      color: '#222',
-      hover: '#fff',
-      gray: {
-        200: '#BCBCBC',
-      },
-    },
-    card: {
-      background: '#fff',
-    },
-    button: {
-      color: '#fff',
-      disabledBackground: '#ccc',
-    },
+    white: '#FFF',
+    dark: '#222',
+    disabled: '#ccc',
   },
 };

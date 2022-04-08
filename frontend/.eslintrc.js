@@ -18,5 +18,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'react/jsx-no-bind': 'off',
     'class-methods-use-this': 'off',
+    'react/no-unescaped-entities': 'off',
+    'react/jsx-one-expression-per-line': 'off',
   },
 };

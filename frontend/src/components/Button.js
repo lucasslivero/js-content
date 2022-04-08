@@ -9,7 +9,7 @@ export default styled.button`
   box-shadow: 0px 4px 10px rgba(0,0,0,0.04);
   font-weight: bold;
   border-radius: 4px;
-  color: ${({ theme }) => theme.colors.button.color};
+  color: ${({ theme }) => theme.colors.white};
   transition: background 0.2s ease-in;
   &:hover {
     background: ${({ theme }) => theme.colors.primary.light};
@@ -20,7 +20,7 @@ export default styled.button`
   }
 
   &:disabled {
-    background: ${({ theme }) => theme.colors.button.disabledBackground};
+    background: ${({ theme }) => theme.colors.disabled};
     cursor: default;
   }
 

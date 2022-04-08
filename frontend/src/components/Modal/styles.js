@@ -23,7 +23,7 @@ export const Container = styled.div`
 
   h1 {
     font-size: 22px;
-    color: ${({ theme, danger }) => (danger ? theme.colors.danger.main : theme.colors.text.color)}
+    color: ${({ theme, danger }) => (danger ? theme.colors.danger.main : theme.colors.dark)}
   }
 
   p {
@@ -40,7 +40,7 @@ export const Footer = styled.footer`
   .cancel-button {
     background: transparent;
     border: none;
-    color: ${({ theme }) => theme.colors.text.gray[200]};
+    color: ${({ theme }) => theme.colors.gray[200]};
     margin-right: 8px;
     font-size: 16px;
   }

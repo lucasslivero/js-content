@@ -7,11 +7,13 @@ export const Container = styled.div`
 export const Header = styled.header`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: ${({ justifyContent }) => justifyContent};
   margin-top: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid ${({ theme }) => theme.colors.gray[100]};
 
   strong {
-    color: ${({ theme }) => theme.colors.text.color};
+    color: ${({ theme }) => theme.colors.dark};
     font-size: 24px;
   }
 
@@ -26,7 +28,7 @@ export const Header = styled.header`
 
     &:hover {
       background: ${({ theme }) => theme.colors.primary.main};
-      color: ${({ theme }) => theme.colors.text.hover};
+      color: ${({ theme }) => theme.colors.white};
     }
   }
 `;
@@ -56,7 +58,7 @@ export const ListHeader = styled.header`
 `;
 
 export const Card = styled.div`
-  background: ${({ theme }) => theme.colors.card.background};
+  background: ${({ theme }) => theme.colors.white};
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   padding: 16px;
   border-radius: 4px;
@@ -84,7 +86,7 @@ export const Card = styled.div`
     span {
       display: block;
       font-size: 14px;
-      color: ${({ theme }) => theme.colors.text.gray[200]};
+      color: ${({ theme }) => theme.colors.gray[200]};
     }
   }
 
@@ -102,6 +104,10 @@ export const Card = styled.div`
   & + & {
     margin-top: 18px;
   }
+
+  &:last-child {
+    margin-bottom: 18px;
+  }
 `;
 
 export const InputSearchContainer = styled.div`
@@ -109,7 +115,7 @@ export const InputSearchContainer = styled.div`
 
   input {
     width: 100%;
-    background: ${({ theme }) => theme.colors.input.background};
+    background: ${({ theme }) => theme.colors.white};
     border: none;
     border-radius: 24px;
     height: 50px;
@@ -118,7 +124,51 @@ export const InputSearchContainer = styled.div`
     outline: 0;
 
     &::placeholder {
-      color: ${({ theme }) => theme.colors.input.placeholder};
+      color: ${({ theme }) => theme.colors.gray[200]};
     }
+  }
+`;
+
+export const ErrorContainer = styled.div`
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+
+  .details {
+    margin-left: 24px;
+    strong {
+      font-size: 22px;
+      color: ${({ theme }) => theme.colors.danger.main};
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+  }
+`;
+
+export const EmptyListContainer = styled.div`
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  p {
+    color: ${({ theme }) => theme.colors.gray[200]};
+    margin-top: 16px;
+    text-align: center;
+
+    strong {
+      color: ${({ theme }) => theme.colors.primary.main};
+    }
+  }
+`;
+
+export const SearchNotFoundContainer = styled.div`
+  margin-top: 16px;
+  display: flex;
+  align-items: flex-start;
+
+  span {
+    margin-left: 24px;
+    color: ${({ theme }) => theme.colors.gray[200]};
+    word-break: break-word;
   }
 `;
