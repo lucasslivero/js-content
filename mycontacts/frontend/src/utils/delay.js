@@ -1,5 +1,7 @@
-export default async function delay(seconds) {
+export default function delay(ms = 1000) {
   return new Promise((resolve) => {
-    setTimeout(() => resolve(), seconds * 1000);
+    setTimeout(() => {
+      resolve();
+    }, ms);
   });
 }

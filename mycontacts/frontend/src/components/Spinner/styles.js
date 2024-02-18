@@ -43,6 +43,10 @@ export const StyledSpinner = styled.div`
   -webkit-transform: translateZ(0);
   -ms-transform: translateZ(0);
   transform: translateZ(0);
-  -webkit-animation: ${load} 1.7s infinite ease, ${round} 1.7s infinite ease;
-  animation: ${load} 1.7s infinite ease, ${round} 1.7s infinite ease;
+  -webkit-animation:
+    ${load} 1.7s infinite ease,
+    ${round} 1.7s infinite ease;
+  animation:
+    ${load} 1.7s infinite ease,
+    ${round} 1.7s infinite ease;
 `;

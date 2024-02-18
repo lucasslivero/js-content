@@ -1,9 +1,29 @@
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
+
+const fadeIn = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+
+const fadeOut = keyframes`
+  from { opacity: 1; }
+  to { opacity: 0; }
+`;
+
+const scaleIn = keyframes`
+  from { clip-path: inset(10% 50% 90% 50% round 24px); transform: scale(0.6); }
+  to { clip-path: inset(0% 0% 0% 0% round 0px); transform: scale(1); }
+`;
+
+const scaleOut = keyframes`
+  from { clip-path: inset(0% 0% 0% 0% round 0px); transform: scale(1); }
+  to { clip-path: inset(10% 50% 90% 50% round 24px); transform: scale(0.6); }
+`;
 
 export const Overlay = styled.div`
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(5px);
-  position: absolute;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2.5px);
+  position: fixed;
   width: 100%;
   height: 100%;
   left: 0;
@@ -11,23 +31,41 @@ export const Overlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: ${fadeIn} 0.3s;
+
+  ${({ isLeaving }) =>
+    isLeaving &&
+    css`
+      animation: ${fadeOut} 0.2s forwards;
+    `};
 `;
 
 export const Container = styled.div`
   width: 100%;
   max-width: 450px;
   background: #fff;
-  border-radius : 4px;
+  border-radius: 5px;
   padding: 24px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  animation: ${scaleIn} 0.3s;
 
-  h1 {
+  ${({ isLeaving }) =>
+    isLeaving &&
+    css`
+      animation: ${scaleOut} 0.2s forwards;
+    `};
+
+  > h1 {
     font-size: 22px;
-    color: ${({ theme, danger }) => (danger ? theme.colors.danger.main : theme.colors.dark)}
+    color: ${({ theme, danger }) => (danger ? theme.colors.danger.main : theme.colors.gray[900])};
   }
 
-  p {
-    margin-top: 8px;
+  button {
+    width: 92px;
+  }
+
+  .modal-body {
+    margin-top: 32px;
   }
 `;
 
@@ -40,8 +78,13 @@ export const Footer = styled.footer`
   .cancel-button {
     background: transparent;
     border: none;
-    color: ${({ theme }) => theme.colors.gray[200]};
-    margin-right: 8px;
     font-size: 16px;
+    margin-right: 24px;
+    color: ${({ theme }) => theme.colors.gray[200]};
+
+    &[disabled] {
+      opacity: 0.4;
+      cursor: default;
+    }
   }
 `;

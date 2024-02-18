@@ -1,17 +1,17 @@
 import styled from 'styled-components';
 
 export const Container = styled.header`
-  margin-top: 24px;
   margin-bottom: 24px;
 
   a {
     text-decoration: none;
     display: flex;
+    flex-direction: row;
     align-items: center;
 
     span {
+      color: ${({ theme }) => theme.colors.primary.main};
       font-weight: bold;
-      color: ${({ theme }) => theme.colors.primary.main}
     }
 
     img {

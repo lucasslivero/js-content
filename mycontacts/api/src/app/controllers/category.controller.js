@@ -47,9 +47,7 @@ class CategoryController {
 
     const contactByEmail = await CategoryRepository.findByEmail(email);
     if (contactByEmail && contactByEmail.id !== id) {
-      return response
-        .status(400)
-        .json({ error: 'This e-mail is already in use' });
+      return response.status(400).json({ error: 'This e-mail is already in use' });
     }
 
     const contact = await CategoryRepository.update(id, {

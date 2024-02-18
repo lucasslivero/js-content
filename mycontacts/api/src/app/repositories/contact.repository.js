@@ -23,10 +23,7 @@ class ContactRepository {
   }
 
   async findByEmail(email) {
-    const [row] = await db.query(
-      `SELECT * FROM ${this.TABLE} where email = $1`,
-      [email],
-    );
+    const [row] = await db.query(`SELECT * FROM ${this.TABLE} where email = $1`, [email]);
     return row;
   }
 

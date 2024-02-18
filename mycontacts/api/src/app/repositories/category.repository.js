@@ -9,9 +9,7 @@ class CategoryRepository {
   }
 
   async findById(id) {
-    const [row] = await db.query(`SELECT * FROM ${this.TABLE} where id = $1`, [
-      id,
-    ]);
+    const [row] = await db.query(`SELECT * FROM ${this.TABLE} where id = $1`, [id]);
     return row;
   }
 
