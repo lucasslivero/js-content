@@ -1,47 +1,33 @@
-import { IData, IMiddleware, IResponse } from '../interfaces/IMiddleware';
-import { IRequest } from '../interfaces/IRequest';
+import { FastifyReply, FastifyRequest } from 'fastify';
+
+import makeRolePermissionsRepository from '../factories/MakeRolePermissionsRepository';
 import RolePermissionsRepository from '../repositories/RolePermissionsRepository';
 
 export interface IOptions {
   operator: 'OR' | 'AND';
 }
-export default class AuthorizationMiddleware implements IMiddleware {
-  constructor(
-    private readonly requiredPermissions: string[],
-    private readonly rolePermissionsRepository: RolePermissionsRepository,
-    private readonly options?: IOptions,
-  ) {}
+export async function AuthorizationMiddleware(
+  request: FastifyRequest,
+  reply: FastifyReply,
+  requiredPermissions: string[],
+  options?: IOptions,
+) {
+  const rolePermissionsRepository: RolePermissionsRepository = makeRolePermissionsRepository();
+  const account = request.metadata?.account;
+  if (!account) {
+    return reply.code(403).send({ error: 'Access denied !' });
+  }
 
-  async handle({ account }: IRequest): Promise<IResponse | IData> {
-    if (!account) {
-      return {
-        statusCode: 403,
-        body: {
-          error: 'Access denied !',
-        },
-      };
-    }
+  const { permissionsCodes } = await rolePermissionsRepository.execute({
+    roleId: account.role.id,
+  });
+  const filterFn = options?.operator === 'AND' ? 'every' : 'some';
+  // eslint-disable-next-line arrow-body-style
+  const isAllowed = requiredPermissions[filterFn]((permission) => {
+    return permissionsCodes.includes(permission);
+  });
 
-    const { permissionsCodes } = await this.rolePermissionsRepository.execute({
-      roleId: account.role.id,
-    });
-    const filterFn = this.options?.operator === 'AND' ? 'every' : 'some';
-    // eslint-disable-next-line arrow-body-style
-    const isAllowed = this.requiredPermissions[filterFn]((permission) => {
-      return permissionsCodes.includes(permission);
-    });
-
-    if (!isAllowed) {
-      return {
-        statusCode: 403,
-        body: {
-          error: 'Access denied !',
-        },
-      };
-    }
-
-    return {
-      data: {},
-    };
+  if (!isAllowed) {
+    return reply.code(403).send({ error: 'Access denied !' });
   }
 }

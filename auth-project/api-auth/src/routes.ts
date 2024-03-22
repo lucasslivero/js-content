@@ -4,7 +4,8 @@ import { ListOrdersController } from './controllers/ListOrdersController';
 import { RefreshTokenController } from './controllers/RefreshTokenController';
 import { SignInController } from './controllers/SignInController';
 import { SignUpController } from './controllers/SignUpController';
-import { authMiddleware } from './middlewares/authMiddleware';
+import { AuthenticationMiddleware } from './middlewares/AuthenticationMiddleware';
+import { AuthorizationMiddleware } from './middlewares/AuthorizationMiddleware';
 
 export async function publicRoutes(fastify: FastifyInstance) {
   fastify.post('/signup', SignUpController.handle);
@@ -13,7 +14,11 @@ export async function publicRoutes(fastify: FastifyInstance) {
 }
 
 export async function privateRoutes(fastify: FastifyInstance) {
-  fastify.addHook('onRequest', authMiddleware);
-sad
-  fastify.get('/orders', ListOrdersController.handle);
+  fastify.addHook('onRequest', AuthenticationMiddleware);
+
+  fastify.get(
+    '/orders',
+    { onRequest: (req, resp) => AuthorizationMiddleware(req, resp, ['leads:create']) },
+    ListOrdersController.handle,
+  );
 }

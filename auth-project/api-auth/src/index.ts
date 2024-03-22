@@ -11,7 +11,7 @@ const fastify = Fastify();
 fastify.register(FastifyJWT, {
   secret: env.JWT_SECRET,
   sign: {
-    expiresIn: '10s',
+    expiresIn: '10000s',
   },
 });
 fastify.register(publicRoutes);

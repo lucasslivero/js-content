@@ -9,6 +9,7 @@ export class SignUpController {
     email: z.string().email().min(1),
     password: z.string().min(8),
     name: z.string().min(1),
+    roleId: z.string().min(1).uuid(),
   });
 
   static handle = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -18,7 +19,7 @@ export class SignUpController {
       return reply.code(400).send({ errors: result.error.issues });
     }
 
-    const { email, name, password } = result.data;
+    const { email, name, password, roleId } = result.data;
 
     const accountAlreadyExists = await AccountsRepository.findByEmail(email);
 
@@ -32,6 +33,7 @@ export class SignUpController {
       email,
       name,
       password: hashedPassword,
+      roleId,
     });
 
     return reply.code(201).send({

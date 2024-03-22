@@ -33,7 +33,7 @@ export class SignInController {
       return reply.code(400).send({ errors: 'Invalid credentials.' });
     }
 
-    const accessToken = await reply.jwtSign({ sub: account.id });
+    const accessToken = await reply.jwtSign({ sub: account.id, role: account.role });
 
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + EXP_TIME_IN_DAYS);
