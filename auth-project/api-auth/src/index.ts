@@ -1,5 +1,6 @@
 import 'dotenv/config';
 
+import cors from '@fastify/cors';
 import FastifyJWT from '@fastify/jwt';
 import Fastify from 'fastify';
 
@@ -14,6 +15,7 @@ fastify.register(FastifyJWT, {
     expiresIn: '10000s',
   },
 });
+fastify.register(cors);
 fastify.register(publicRoutes);
 fastify.register(privateRoutes);
 
