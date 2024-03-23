@@ -1,26 +1,32 @@
-import crypto from 'node:crypto';
-
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { z } from 'zod';
+
+import { IOrdersDTO } from '../interfaces/IOrders';
+import { orders } from '../lib/db';
+import { OrdersRepository } from '../repositories/OrdersRepository';
 
 export class ListOrdersController {
-  static handle = async (request: FastifyRequest, reply: FastifyReply) =>
-    reply.code(200).send({
-      orders: [
-        {
-          id: crypto.randomUUID(),
-          orderNumber: '#001',
-          date: Date.now(),
-        },
-        {
-          id: crypto.randomUUID(),
-          orderNumber: '#002',
-          date: Date.now(),
-        },
-        {
-          id: crypto.randomUUID(),
-          orderNumber: '#003',
-          date: Date.now(),
-        },
-      ],
+  static schema: z.ZodType<IOrdersDTO> = z.object({
+    name: z.string().min(1),
+    price: z.number().positive(),
+  });
+
+  static async handle(request: FastifyRequest, reply: FastifyReply) {
+    return reply.code(200).send({
+      orders,
     });
+  }
+
+  static async create(request: FastifyRequest, reply: FastifyReply) {
+    const result = ListOrdersController.schema.safeParse(request.body);
+
+    if (!result.success) {
+      return reply.code(400).send({ errors: result.error.issues });
+    }
+
+    const order = await OrdersRepository.create(result.data);
+    return reply.code(201).send({
+      order,
+    });
+  }
 }

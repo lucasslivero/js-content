@@ -18,7 +18,15 @@ export async function privateRoutes(fastify: FastifyInstance) {
 
   fastify.get(
     '/orders',
-    { onRequest: (req, resp) => AuthorizationMiddleware(req, resp, ['leads:create']) },
+    {
+      onRequest: (req, resp) =>
+        AuthorizationMiddleware(req, resp, ['orders:read', 'orders:create'], { operator: 'OR' }),
+    },
     ListOrdersController.handle,
+  );
+  fastify.post(
+    '/orders',
+    { onRequest: (req, resp) => AuthorizationMiddleware(req, resp, ['orders:create']) },
+    ListOrdersController.create,
   );
 }
