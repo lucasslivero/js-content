@@ -1,10 +1,11 @@
+import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar';
+import { Switch } from '@radix-ui/react-switch';
+
 import { useUpdateUser } from '@/app/hooks/useUpdateUser';
 import { useUsers } from '@/app/hooks/useUsers';
 import { cn } from '@/app/libs/utils';
 
-import { Avatar, AvatarFallback, AvatarImage } from './ui/Avatar';
-import { Skeleton } from './ui/Skeleton';
-import { Switch } from './ui/Switch';
+import { Skeleton } from '../ui/Skeleton';
 
 export function UsersList() {
   const { users, isLoading } = useUsers();
@@ -15,7 +16,7 @@ export function UsersList() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-2">
       {isLoading && (
         <>
           <Skeleton className="h-[74px]" />
@@ -35,7 +36,7 @@ export function UsersList() {
         >
           <div className="flex items-center gap-4">
             <Avatar>
-              <AvatarImage src={`https://github.com/${user.username}.png`} />
+              <AvatarImage width="90px" src={`https://github.com/${user.username}.png`} />
               <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
 
