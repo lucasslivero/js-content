@@ -7,7 +7,10 @@ export function Home() {
         <Link to="/optimistic-updates">Optimistic Updates</Link>
       </li>
       <li>
-        <Link to="/pagination">Pagination + Infinity Scroll</Link>
+        <Link to="/pagination">Pagination</Link>
+      </li>
+      <li>
+        <Link to="/pagination-infinity-scroll">Pagination with Infinity Scroll</Link>
       </li>
     </ul>
   );

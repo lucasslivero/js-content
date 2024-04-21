@@ -12,12 +12,7 @@ export function useClients(perPage = 10) {
   const { data, isLoading } = useQuery({
     queryKey: ['clients', { page: pagination.currentPage, perPage }],
     staleTime: Infinity,
-    queryFn: async () => {
-      const response = await ClientsService.getAll(pagination.currentPage, perPage);
-
-      setTotalItems(response.items);
-      return response;
-    },
+    queryFn: () => ClientsService.getAll(pagination.currentPage, perPage),
   });
 
   useEffect(() => {
@@ -25,14 +20,15 @@ export function useClients(perPage = 10) {
     queryClient.prefetchQuery({
       queryKey: ['clients', { page: nextPage, perPage }],
       staleTime: Infinity,
-      queryFn: async () => {
-        const response = await ClientsService.getAll(nextPage, perPage);
-
-        setTotalItems(response.items);
-        return response;
-      },
+      queryFn: () => ClientsService.getAll(nextPage, perPage),
     });
   }, [pagination.currentPage, perPage, queryClient, setTotalItems]);
+
+  useEffect(() => {
+    if (data?.data) {
+      setTotalItems(data.items);
+    }
+  }, [data, setTotalItems]);
 
   return {
     clients: data?.data ?? [],

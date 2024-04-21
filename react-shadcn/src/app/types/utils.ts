@@ -16,7 +16,7 @@ export function generateEllipsisPagination(
       i === currentPage - surroundingPages || i === currentPage + surroundingPages;
 
     if (isEllipsisPosition && !isFirstPage && !isLastPage) {
-      pages.push('...');
+      pages.push(`ellipsis-${i}`);
       continue;
     }
 

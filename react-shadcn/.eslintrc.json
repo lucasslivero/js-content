@@ -23,6 +23,7 @@
   "plugins": ["@typescript-eslint"],
   "rules": {
     "no-continue": "off",
+    "consistent-return": "off",
     "prettier/prettier": "error",
     "react/jsx-filename-extension": [1, { "extensions": [".tsx"] }],
     "react/react-in-jsx-scope": "off",

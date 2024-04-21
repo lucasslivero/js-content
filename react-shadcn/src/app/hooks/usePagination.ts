@@ -16,7 +16,9 @@ export function usePagination(initialPage = 1, perPage = 10) {
   const hasPreviousPage = currentPage > 1;
 
   useEffect(() => {
-    setSearchParams((prevState) => ({ ...prevState, page: currentPage.toString() }));
+    setSearchParams((prevState) => ({ ...prevState, page: currentPage.toString() }), {
+      replace: true,
+    });
   }, [currentPage, setSearchParams]);
 
   const nextPage = useCallback(() => {
