@@ -1,0 +1,30 @@
+@host =  http://localhost:3000
+
+###
+GET {{host}}/products
+
+###
+GET {{host}}/products/50ffd37a-0627-4c5b-9bb7-802a52d84aca
+
+###
+POST {{host}}/products
+Content-Type: application/json
+
+{
+  "name": "Moletom JStack",
+  "price": 199.9,
+  "tags": ["moleta", "zica do baile"]
+}
+
+###
+PUT {{host}}/products/db1b2379-232b-4f86-8aaa-8d6d35a50a89
+Content-Type: application/json
+
+{
+  "name": "Moletom JStack",
+  "price": 199.9,
+  "tags": ["moleta", "zica do baile"]
+}
+
+###
+DELETE {{host}}/products/da715649-ad56-4f42-a5f9-f1ac81b21489
