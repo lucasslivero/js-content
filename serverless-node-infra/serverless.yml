@@ -1,14 +1,20 @@
 service: serveless-node-infra
 frameworkVersion: '3'
 
+useDotenv: true
+
 plugins:
   - serverless-esbuild
-  - serverless-dynamodb-local
+  - serverless-dynamodb
   - serverless-offline
 
 provider:
   name: aws
   runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  profile: app
+  timeout: 10 # optional, in seconds, default is 6
+  region: us-east-1
   iam:
     role:
       statements:
@@ -21,34 +27,35 @@ provider:
             - dynamodb:UpdateItem
           Resource:
             - !GetAtt ProductsTable.Arn
+  environment:
+    STAGE: ${self:provider.stage}
+    # DEBUG: ${env:DEBUG}
 
 package:
   individually: true
 
 custom:
   esbuild:
+    target: node20
     bundle: true
     minify: true
     sourcemap: false
-    target: node20
     exclude:
       - '@aws-sdk/*'
     # define:
     #   require.resolve: undefined
     platform: node
     # concurrency: 10
-  dynamodb:
-    # stages:
-    #   - dev
+  serverless-dynamodb:
+    stages:
+      - dev
     start:
       docker: true
       port: 8000
-      inMemory: true
+      shareDB: true
       migrate: true
-      # seed: true
       convertEmptyValues: true
-    # Uncomment only if you already have a DynamoDB running locally
-    # noStart: true
+      noStart: true
 
 functions:
   listProducts:
@@ -89,8 +96,8 @@ resources:
       Properties:
         TableName: ProductsTable
         BillingMode: PAY_PER_REQUEST
-        PointInTimeRecoverySpecification:
-          PointInTimeRecoveryEnabled: true
+        # PointInTimeRecoverySpecification:
+        # PointInTimeRecoveryEnabled: true
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
