@@ -1,15 +1,10 @@
 import { DeleteCommand } from '@aws-sdk/lib-dynamodb';
 import { dynamoClient } from '@libs/dynamoClient';
+import { response } from '@utils/response';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 
 export async function handler(event: APIGatewayProxyEventV2) {
-  if (!event?.pathParameters?.productId) {
-    return {
-      statusCode: 422,
-      body: JSON.stringify({ message: 'Product id is missing' }),
-    };
-  }
-  const { productId } = event.pathParameters;
+  const productId = event.pathParameters?.productId;
 
   const command = new DeleteCommand({
     TableName: 'ProductsTable',
@@ -20,7 +15,5 @@ export async function handler(event: APIGatewayProxyEventV2) {
 
   await dynamoClient.send(command);
 
-  return {
-    statusCode: 204,
-  };
+  return response(204);
 }

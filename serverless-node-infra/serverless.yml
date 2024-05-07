@@ -15,6 +15,14 @@ provider:
   profile: app
   timeout: 10 # optional, in seconds, default is 6
   region: us-east-1
+  httpApi:
+    authorizers:
+      CognitoAuthorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        issuerURL: !GetAtt UserPool.ProviderURL
+        audience:
+          - !Ref UserPoolClient
   iam:
     role:
       statements:
@@ -27,8 +35,14 @@ provider:
             - dynamodb:UpdateItem
           Resource:
             - !GetAtt ProductsTable.Arn
+        - Effect: Allow
+          Action:
+            - cognito-idp:AdminGetUser
+          Resource: !GetAtt UserPool.Arn
   environment:
     STAGE: ${self:provider.stage}
+    COGNITO_CLIENT_ID: !Ref UserPoolClient
+    COGNITO_POOL_ID: !Ref UserPool
     # DEBUG: ${env:DEBUG}
 
 package:
@@ -58,36 +72,68 @@ custom:
       noStart: true
 
 functions:
-  listProducts:
+  dynamoDBlistProducts:
     handler: src/functions/dynamoDB/listProducts.handler
     events:
       - httpApi:
           path: /products
           method: GET
-  getProduct:
+  dynamoDBgetProduct:
     handler: src/functions/dynamoDB/getProduct.handler
     events:
       - httpApi:
           path: /products/{productId}
           method: GET
-  createProduct:
+  dynamoDBcreateProduct:
     handler: src/functions/dynamoDB/createProduct.handler
     events:
       - httpApi:
           path: /products
           method: POST
-  updateProduct:
+  dynamoDBupdateProduct:
     handler: src/functions/dynamoDB/updateProduct.handler
     events:
       - httpApi:
           path: /products/{productId}
           method: PUT
-  deleteProduct:
+  dynamoDBdeleteProduct:
     handler: src/functions/dynamoDB/deleteProduct.handler
     events:
       - httpApi:
           path: /products/{productId}
           method: DELETE
+  cognitoSignUp:
+    handler: src/functions/cognito/signUp.handler
+    events:
+      - httpApi:
+          path: /auth/sign-up
+          method: POST
+  cognitoAccountConfirmation:
+    handler: src/functions/cognito/accountConfirmation.handler
+    events:
+      - httpApi:
+          path: /auth/account-confirmation
+          method: POST
+  cognitoSignIn:
+    handler: src/functions/cognito/signIn.handler
+    events:
+      - httpApi:
+          path: /auth/sign-in
+          method: POST
+  cognitoRefreshToken:
+    handler: src/functions/cognito/refreshToken.handler
+    events:
+      - httpApi:
+          path: /auth/refresh-token
+          method: POST
+  cognitoUserProfile:
+    handler: src/functions/cognito/userProfile.handler
+    events:
+      - httpApi:
+          path: /user-profile
+          method: GET
+          authorizer:
+            name: CognitoAuthorizer
 
 resources:
   Resources:
@@ -104,3 +150,49 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+    UserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: UserPool
+        DeletionProtection: INACTIVE
+        MfaConfiguration: OFF
+        AutoVerifiedAttributes:
+          - email
+        AdminCreateUserConfig:
+          AllowAdminCreateUserOnly: true
+        UserNameAttributes:
+          - email
+        AccountRecoverySetting:
+          RecoveryMechanisms:
+            - name: admin_only
+              Priority: 1
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireNumbers: false
+            RequireSymbols: true
+            RequireUppercase: false
+            TemporaryPasswordValidityDays: 2
+        Schema:
+          - Name: given_name
+            Mutable: true
+            required: true
+            AttributeDataType: String
+          - Name: family_name
+            Mutable: true
+            required: true
+            AttributeDataType: String
+    UserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        UserPoolId: !Ref UserPool
+        ClientName: UserPoolClient
+        ExplicitAuthFlows:
+          - ALLOW_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        TokenValidityUnits:
+          AccessToken: hours
+          RefreshToken: hours
+        AccessTokenValidity: 3
+        RefreshTokenValidity: 720 # 30 days

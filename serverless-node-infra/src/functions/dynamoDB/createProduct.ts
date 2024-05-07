@@ -1,17 +1,13 @@
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { dynamoClient } from '@libs/dynamoClient';
+import { bodyParser } from '@utils/bodyParser';
+import { response } from '@utils/response';
 
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { randomUUID } from 'node:crypto';
 
 export async function handler(event: APIGatewayProxyEventV2) {
-  if (!event.body) {
-    return {
-      statusCode: 422,
-      body: JSON.stringify({ message: 'no body' }),
-    };
-  }
-  const body = JSON.parse(event.body);
+  const body = bodyParser(event.body);
 
   const id = randomUUID();
 
@@ -25,10 +21,7 @@ export async function handler(event: APIGatewayProxyEventV2) {
     },
   });
 
-  const response = await dynamoClient.send(command);
+  const bodyResp = await dynamoClient.send(command);
 
-  return {
-    statusCode: 201,
-    body: JSON.stringify(response),
-  };
+  return response(201, bodyResp);
 }

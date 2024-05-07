@@ -1,24 +1,13 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { dynamoClient } from '@libs/dynamoClient';
+import { bodyParser } from '@utils/bodyParser';
+import { response } from '@utils/response';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 
 export async function handler(event: APIGatewayProxyEventV2) {
-  if (!event.body) {
-    return {
-      statusCode: 422,
-      body: JSON.stringify({ message: 'no body' }),
-    };
-  }
-  const body = JSON.parse(event.body);
+  const body = bodyParser(event.body);
 
-  if (!event?.pathParameters?.productId) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'Product id is missing' }),
-    };
-  }
-
-  const { productId } = event.pathParameters;
+  const productId = event.pathParameters?.productId;
 
   const command = new UpdateCommand({
     TableName: 'ProductsTable',
@@ -40,7 +29,5 @@ export async function handler(event: APIGatewayProxyEventV2) {
 
   await dynamoClient.send(command);
 
-  return {
-    statusCode: 204,
-  };
+  return response(204);
 }
