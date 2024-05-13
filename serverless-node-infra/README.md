@@ -1,64 +1,46 @@
-# Serverless Framework AWS NodeJS Example
+# Serverless Framework AWS NodeJS Project
 
-## Usage
+## Start
 
-### Docker DynamoDB
+To Run the project
 
-In order to create dynamoDB instance
+```bash
+$ yarn start
+# Or
+$ yarn start:dev # For Live Reloading (automatically refresh the functions)
 
 ```
+
+## Docs
+
+### First Steps
+
+- Install all packages: `yarn install `
+- Install dynamoDB Local with docker or locally in your machine
+
+### Docker S3 Local
+
+https://github.com/ar90n/serverless-s3-local
+In order to create s3 instance:
+
+### Docker DynamoDB Local
+
+In order to create dynamoDB instance:
+
+```bash
 $ docker run -p 8000:8000 --name dynamoDB -d amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb -inMemory
 ```
 
 ### Deployment
 
-In order to deploy the example, you need to run the following command:
+In order to deploy:
 
-```
+```bash
 $ serverless deploy
 ```
 
-After running deploy, you should see output similar to:
+In order to remove everything:
 
 ```bash
-Deploying aws-node-project to stage dev (us-east-1)
-
-✔ Service deployed to stack aws-node-project-dev (112s)
-
-functions:
-  hello: aws-node-project-dev-hello (1.5 kB)
-```
-
-### Invocation
-
-After successful deployment, you can invoke the deployed function by using the following command:
-
-```bash
-serverless invoke --function hello
-```
-
-Which should result in response similar to the following:
-
-```json
-{
-  "statusCode": 200,
-  "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": {}\n}"
-}
-```
-
-### Local development
-
-You can invoke your function locally by using the following command:
-
-```bash
-serverless invoke local --function hello
-```
-
-Which should result in response similar to the following:
-
-```
-{
-    "statusCode": 200,
-    "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": \"\"\n}"
-}
+$ serverless remove
 ```

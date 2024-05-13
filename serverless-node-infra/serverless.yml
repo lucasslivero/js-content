@@ -43,6 +43,7 @@ provider:
     STAGE: ${self:provider.stage}
     COGNITO_CLIENT_ID: !Ref UserPoolClient
     COGNITO_POOL_ID: !Ref UserPool
+    BUCKET_UPLOAD_NAME: !Ref FileUploaderBucket
     # DEBUG: ${env:DEBUG}
 
 package:
@@ -154,7 +155,6 @@ functions:
           trigger: CustomMessage
           existing: true
           forceDeploy: true
-
 resources:
   Resources:
     ProductsTable:
@@ -170,6 +170,23 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+    UploadedFilesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: UploadedFiles
+        BillingMode: PAY_PER_REQUEST
+        # PointInTimeRecoverySpecification:
+        # PointInTimeRecoveryEnabled: true
+        AttributeDefinitions:
+          - AttributeName: fileKey
+            AttributeType: S
+        KeySchema:
+          - AttributeName: fileKey
+            KeyType: HASH
+        TimeToLiveSpecification:
+          Enabled: true
+          AttributeName: expiresAt
+
     UserPool:
       Type: AWS::Cognito::UserPool
       Properties:
@@ -216,3 +233,39 @@ resources:
           RefreshToken: hours
         AccessTokenValidity: 3
         RefreshTokenValidity: 720 # 30 days
+    FileUploaderBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: uploaded-files
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+            AllowedOrigins:
+              - '*'
+            Id: myCORSRuleId1
+            MaxAge: 3600
+    MyBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref FileUploaderBucket
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Principal: '*'
+              Action:
+                - 's3:GetObject'
+                - 's3:PutObject'
+              Resource:
+                Fn::Join:
+                  - ''
+                  - - !GetAtt FileUploaderBucket.Arn
+                    - '/*'
