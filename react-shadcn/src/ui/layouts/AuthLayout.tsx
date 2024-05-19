@@ -4,11 +4,13 @@ import { Header } from '@/components/Header';
 
 export function AuthLayout() {
   return (
-    <div className="h-full w-full">
+    <div className="flex h-full w-full flex-col">
       <Header />
 
-      <main className="mt-5 h-full w-full space-y-3">
-        <Outlet />
+      <main className="h-full w-full overflow-hidden">
+        <div className="h-full w-full overflow-auto p-5">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

@@ -35,7 +35,7 @@ export function Clients() {
 
   return (
     <div>
-      <header className="mb-6 pb-10">
+      <header className="mb-4 pb-4">
         <h1 className="text-3xl font-bold">Clientes</h1>
       </header>
 

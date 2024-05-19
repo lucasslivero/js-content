@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Loader2Icon, PackageOpenIcon, Trash2Icon } from 'lucide-react';
+import { EyeIcon, Loader2Icon, PackageOpenIcon, Trash2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/Progress';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Spinner } from '@/components/ui/Spinner';
 
 interface IUpload {
@@ -36,9 +37,15 @@ export function FileUploader() {
     queryFn: () => UploadFileService.getFiles(),
   });
 
-  const { mutateAsync, isPending: loadingImage } = useMutation({
+  const { mutateAsync: getFileURL, isPending: loadingImage } = useMutation({
     mutationFn: (data: IFile) => {
       return UploadFileService.getPresignedUrl(data.fileKey, 'GET');
+    },
+  });
+
+  const { mutateAsync: deleteFile, isPending: isDeletingFIle } = useMutation({
+    mutationFn: (data: IFile) => {
+      return UploadFileService.deleteFile(data.fileKey);
     },
   });
 
@@ -102,15 +109,20 @@ export function FileUploader() {
     }
   }
 
+  async function handleDeleteFile(file: IFile) {
+    await deleteFile(file);
+    refetchFiles();
+  }
+
   async function handleSelectFile(file: IFile) {
     setSelectedFile(file);
-    const signedURL = await mutateAsync(file);
+    const signedURL = await getFileURL(file);
     setSelectedFile({ ...file, signedURL });
   }
 
   return (
-    <div className="flex h-full w-full justify-center gap-4 px-6 py-20">
-      <div className="h-full w-1/2 max-w-xl overflow-auto">
+    <div className="flex h-full w-full justify-center gap-4">
+      <ScrollArea className="h-full w-1/2 px-4">
         <h1 className="mb-2 text-xl">Upload yours files</h1>
         <div
           {...getRootProps()}
@@ -149,19 +161,26 @@ export function FileUploader() {
             </Button>
           </div>
         )}
-      </div>
-      <div className="h-full w-1/2 max-w-xl overflow-auto">
+      </ScrollArea>
+      <ScrollArea className="h-full w-1/2 px-4">
         <h1 className="mb-2 text-xl">Files uploaded</h1>
         <div className="mb-4 space-y-2">
           {filesUploaded &&
             filesUploaded?.map((file) => (
-              <div
-                key={file.fileKey}
-                className="cursor-pointer rounded-md border p-3"
-                onClick={() => handleSelectFile(file)}
-              >
+              <div key={file.fileKey} className="cursor-pointer rounded-md border p-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">{file.originalFileName}</span>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="icon">
+                      <EyeIcon className="size-4" onClick={() => handleSelectFile(file)} />
+                    </Button>
+                    <Button variant="destructive" size="icon">
+                      {isDeletingFIle && <Loader2Icon className="size-4 animate-spin" />}
+                      {!isDeletingFIle && (
+                        <Trash2Icon className="size-4" onClick={() => handleDeleteFile(file)} />
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -186,7 +205,7 @@ export function FileUploader() {
 
           {loadingFiles && <Spinner size="large" />}
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 }

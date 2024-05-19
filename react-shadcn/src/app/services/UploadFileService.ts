@@ -37,4 +37,12 @@ export class UploadFileService {
     const { data } = await httpClient.get<IFile[]>('/s3/listFiles');
     return data;
   }
+
+  static async deleteFile(fileKey: string) {
+    return httpClient.get('/s3/deleteFile', {
+      params: {
+        fileKey,
+      },
+    });
+  }
 }

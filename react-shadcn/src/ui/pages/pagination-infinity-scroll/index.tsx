@@ -2,7 +2,7 @@ import { ClientsInfinity } from '@/components/pagination-infinity-scroll/Clients
 
 export function PaginationInfinityScroll() {
   return (
-    <div className="mt-10 space-y-3">
+    <div className="mt-4 space-y-3">
       <ClientsInfinity />
     </div>
   );

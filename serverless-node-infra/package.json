@@ -8,8 +8,9 @@
   "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "sls offline start --noAuth",
-    "start:dev": "sls offline start --reloadHandler --noAuth",
+    "start": "sls offline start",
+    "dev": "sls offline start --reloadHandler --noAuth",
+    "dev:auth": "sls offline start --reloadHandler",
     "deploy:stage": "sls deploy --stage staging",
     "lint": "eslint src/ --ext .ts --quiet --fix"
   },

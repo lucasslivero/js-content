@@ -172,6 +172,12 @@ functions:
       - httpApi:
           path: /s3/listFiles
           method: GET
+  s3DeleteFile:
+    handler: src/functions/s3/deleteFile.handler
+    events:
+      - httpApi:
+          path: /s3/deleteFile
+          method: GET
 resources:
   Resources:
     ProductsTable:
