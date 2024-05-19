@@ -7,7 +7,7 @@ export function AuthLayout() {
     <div className="h-full w-full">
       <Header />
 
-      <main className="mt-5 space-y-3">
+      <main className="mt-5 h-full w-full space-y-3">
         <Outlet />
       </main>
     </div>

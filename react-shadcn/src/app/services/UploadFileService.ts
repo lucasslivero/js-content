@@ -2,13 +2,23 @@ import axios from 'axios';
 
 import { httpClient } from './httpClient';
 
-export class UploadFileService {
-  static async getPresignedUrl(file: File) {
-    const { data } = await httpClient.post<{ signedUrl: string }>('/clients', {
-      filename: file.name,
-    });
+export interface IFile {
+  fileKey: string;
+  originalFileName: string;
+  status: string;
+  expiresAt: Date;
+  signedURL?: string;
+}
 
-    return data.signedUrl;
+type signedURLType = 'GET' | 'PUT';
+
+export class UploadFileService {
+  static async getPresignedUrl(filename: string, type: signedURLType) {
+    const { data } = await httpClient.post<{ signedURL: string }>('/s3/getPresignedURL', {
+      filename,
+      type,
+    });
+    return data.signedURL;
   }
 
   static async uploadFile(url: string, file: File, onProgress?: (progress: number) => void) {
@@ -21,5 +31,10 @@ export class UploadFileService {
         onProgress?.(percentage);
       },
     });
+  }
+
+  static async getFiles() {
+    const { data } = await httpClient.get<IFile[]>('/s3/listFiles');
+    return data;
   }
 }

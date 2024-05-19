@@ -8,6 +8,33 @@ plugins:
   - serverless-dynamodb
   - serverless-offline
 
+custom:
+  esbuild:
+    target: node20
+    bundle: true
+    minify: true
+    sourcemap: false
+    exclude:
+      - '@aws-sdk/*'
+    # define:
+    #   require.resolve: undefined
+    platform: node
+    # concurrency: 10
+  serverless-dynamodb:
+    stages:
+      - dev
+    start:
+      docker: true
+      port: 8000
+      shareDB: true
+      migrate: true
+      convertEmptyValues: true
+      noStart: true
+  environment:
+    BUCKET_UPLOAD_NAME: !Ref FileUploaderBucket
+    COGNITO_CLIENT_ID: !Ref UserPoolClient
+    COGNITO_POOL_ID: !Ref UserPool
+
 provider:
   name: aws
   runtime: nodejs20.x
@@ -16,6 +43,7 @@ provider:
   timeout: 10 # optional, in seconds, default is 6
   region: us-east-1
   httpApi:
+    cors: true
     authorizers:
       CognitoAuthorizer:
         type: jwt
@@ -41,36 +69,13 @@ provider:
           Resource: !GetAtt UserPool.Arn
   environment:
     STAGE: ${self:provider.stage}
-    COGNITO_CLIENT_ID: !Ref UserPoolClient
-    COGNITO_POOL_ID: !Ref UserPool
-    BUCKET_UPLOAD_NAME: !Ref FileUploaderBucket
+    COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID, self:custom.environment.COGNITO_CLIENT_ID}
+    COGNITO_POOL_ID: ${env:COGNITO_POOL_ID, self:custom.environment.COGNITO_POOL_ID}
+    BUCKET_UPLOAD_NAME: ${env:BUCKET_UPLOAD_NAME, self:custom.environment.BUCKET_UPLOAD_NAME}
     # DEBUG: ${env:DEBUG}
 
 package:
   individually: true
-
-custom:
-  esbuild:
-    target: node20
-    bundle: true
-    minify: true
-    sourcemap: false
-    exclude:
-      - '@aws-sdk/*'
-    # define:
-    #   require.resolve: undefined
-    platform: node
-    # concurrency: 10
-  serverless-dynamodb:
-    stages:
-      - dev
-    start:
-      docker: true
-      port: 8000
-      shareDB: true
-      migrate: true
-      convertEmptyValues: true
-      noStart: true
 
 functions:
   dynamoDBlistProducts:
@@ -155,6 +160,18 @@ functions:
           trigger: CustomMessage
           existing: true
           forceDeploy: true
+  s3GetPresignedURL:
+    handler: src/functions/s3/getPresignedURL.handler
+    events:
+      - httpApi:
+          path: /s3/getPresignedURL
+          method: POST
+  s3ListFiles:
+    handler: src/functions/s3/listFiles.handler
+    events:
+      - httpApi:
+          path: /s3/listFiles
+          method: GET
 resources:
   Resources:
     ProductsTable:
@@ -186,7 +203,6 @@ resources:
         TimeToLiveSpecification:
           Enabled: true
           AttributeName: expiresAt
-
     UserPool:
       Type: AWS::Cognito::UserPool
       Properties:
@@ -197,11 +213,11 @@ resources:
           - email
         AdminCreateUserConfig:
           AllowAdminCreateUserOnly: true
-        UserNameAttributes:
+        UsernameAttributes:
           - email
         AccountRecoverySetting:
           RecoveryMechanisms:
-            - name: admin_only
+            - Name: admin_only
               Priority: 1
         Policies:
           PasswordPolicy:
@@ -214,11 +230,11 @@ resources:
         Schema:
           - Name: given_name
             Mutable: true
-            required: true
+            Required: true
             AttributeDataType: String
           - Name: family_name
             Mutable: true
-            required: true
+            Required: true
             AttributeDataType: String
     UserPoolClient:
       Type: AWS::Cognito::UserPoolClient
@@ -236,36 +252,20 @@ resources:
     FileUploaderBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: uploaded-files
+        BucketName: serverless-node-infra-uploaded-files
         PublicAccessBlockConfiguration:
           BlockPublicAcls: true
           BlockPublicPolicy: true
           IgnorePublicAcls: true
           RestrictPublicBuckets: true
-        CorsRules:
-          - AllowedHeaders:
-              - '*'
-            AllowedMethods:
-              - GET
-              - PUT
-            AllowedOrigins:
-              - '*'
-            Id: myCORSRuleId1
-            MaxAge: 3600
-    MyBucketPolicy:
-      Type: AWS::S3::BucketPolicy
-      Properties:
-        Bucket: !Ref FileUploaderBucket
-        PolicyDocument:
-          Version: 2012-10-17
-          Statement:
-            - Effect: Allow
-              Principal: '*'
-              Action:
-                - 's3:GetObject'
-                - 's3:PutObject'
-              Resource:
-                Fn::Join:
-                  - ''
-                  - - !GetAtt FileUploaderBucket.Arn
-                    - '/*'
+        CorsConfiguration:
+          CorsRules:
+            - Id: myCORSRuleId1
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+              AllowedOrigins:
+                - '*'
+              MaxAge: 3600

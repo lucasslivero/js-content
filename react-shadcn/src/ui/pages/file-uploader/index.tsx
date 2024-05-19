@@ -1,12 +1,21 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Loader2Icon, PackageOpenIcon, Trash2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
 
 import { cn } from '@/app/libs/utils';
-import { UploadFileService } from '@/app/services/UploadFileService';
+import { IFile, UploadFileService } from '@/app/services/UploadFileService';
 import { Button } from '@/components/ui/Button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/Progress';
+import { Spinner } from '@/components/ui/Spinner';
 
 interface IUpload {
   file: File;
@@ -15,7 +24,23 @@ interface IUpload {
 
 export function FileUploader() {
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<IFile | null>(null);
   const [uploads, setUploads] = useState<IUpload[]>([]);
+
+  const {
+    data: filesUploaded,
+    isFetching: loadingFiles,
+    refetch: refetchFiles,
+  } = useQuery({
+    queryKey: ['s3-listFiles'],
+    queryFn: () => UploadFileService.getFiles(),
+  });
+
+  const { mutateAsync, isPending: loadingImage } = useMutation({
+    mutationFn: (data: IFile) => {
+      return UploadFileService.getPresignedUrl(data.fileKey, 'GET');
+    },
+  });
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptFiles) => {
@@ -33,29 +58,31 @@ export function FileUploader() {
     });
   }
 
+  function updateProgress(progress: number, index: number) {
+    setUploads((prevState) => {
+      const newState = [...prevState];
+      const uploadFile = newState[index];
+      newState[index] = {
+        ...uploadFile,
+        progress,
+      };
+      return newState;
+    });
+  }
+
   async function handleUpload() {
     setIsLoading(true);
     try {
       const uploadFiles = await Promise.all(
         uploads.map(async ({ file }) => ({
           file,
-          url: await UploadFileService.getPresignedUrl(file),
+          url: await UploadFileService.getPresignedUrl(file.name, 'PUT'),
         })),
       );
 
       const responses = await Promise.allSettled(
         uploadFiles.map(({ file, url }, index) =>
-          UploadFileService.uploadFile(url, file, (progress) => {
-            setUploads((prevState) => {
-              const newState = [...prevState];
-              const uploadFile = newState[index];
-              newState[index] = {
-                ...uploadFile,
-                progress,
-              };
-              return newState;
-            });
-          }),
+          UploadFileService.uploadFile(url, file, (progress) => updateProgress(progress, index)),
         ),
       );
 
@@ -68,15 +95,23 @@ export function FileUploader() {
 
       setUploads([]);
       toast.success('Uploads realizados com sucesso !');
+      refetchFiles();
     } catch {
     } finally {
       setIsLoading(false);
     }
   }
 
+  async function handleSelectFile(file: IFile) {
+    setSelectedFile(file);
+    const signedURL = await mutateAsync(file);
+    setSelectedFile({ ...file, signedURL });
+  }
+
   return (
-    <div className="flex min-h-screen justify-center px-6 py-20">
-      <div className="w-full max-w-xl">
+    <div className="flex h-full w-full justify-center gap-4 px-6 py-20">
+      <div className="h-full w-1/2 max-w-xl overflow-auto">
+        <h1 className="mb-2 text-xl">Upload yours files</h1>
         <div
           {...getRootProps()}
           className={cn(
@@ -114,6 +149,43 @@ export function FileUploader() {
             </Button>
           </div>
         )}
+      </div>
+      <div className="h-full w-1/2 max-w-xl overflow-auto">
+        <h1 className="mb-2 text-xl">Files uploaded</h1>
+        <div className="mb-4 space-y-2">
+          {filesUploaded &&
+            filesUploaded?.map((file) => (
+              <div
+                key={file.fileKey}
+                className="cursor-pointer rounded-md border p-3"
+                onClick={() => handleSelectFile(file)}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">{file.originalFileName}</span>
+                </div>
+              </div>
+            ))}
+
+          <Dialog
+            open={!!selectedFile}
+            onOpenChange={(open) => {
+              if (!open) {
+                setSelectedFile(null);
+              }
+            }}
+          >
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Visualize your image</DialogTitle>
+                <DialogDescription>{selectedFile?.originalFileName}</DialogDescription>
+                {loadingImage && <Spinner size="large" />}
+                <img src={selectedFile?.signedURL} alt="" />
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+
+          {loadingFiles && <Spinner size="large" />}
+        </div>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "sls offline start --noAuth",
     "start:dev": "sls offline start --reloadHandler --noAuth",
+    "deploy:stage": "sls deploy --stage staging",
     "lint": "eslint src/ --ext .ts --quiet --fix"
   },
   "dependencies": {
