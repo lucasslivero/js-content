@@ -1,10 +1,10 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
+import { Pagination } from '@/components/ui/Pagination';
 import { AuthLayout } from '@/ui/layouts/AuthLayout';
 import { FileUploader } from '@/ui/pages/file-uploader';
 import { Home } from '@/ui/pages/home';
 import { OptimisticUpdate } from '@/ui/pages/optimistic-updates';
-import { Pagination } from '@/ui/pages/pagination';
 import { PaginationInfinityScroll } from '@/ui/pages/pagination-infinity-scroll';
 
 export function Router() {

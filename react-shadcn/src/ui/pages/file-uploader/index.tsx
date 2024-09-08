@@ -5,7 +5,7 @@ import { useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
 
 import { cn } from '@/app/libs/utils';
-import { IFile, UploadFileService } from '@/app/services/UploadFileService';
+import { IFile, UploadFileService } from '@/app/services/uploadFileService';
 import { Button } from '@/components/ui/Button';
 import {
   Dialog,
@@ -13,9 +13,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/components/ui/Dialog';
 import { Progress } from '@/components/ui/Progress';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { Spinner } from '@/components/ui/Spinner';
 
 interface IUpload {
@@ -96,6 +96,7 @@ export function FileUploader() {
       responses.forEach((response, index) => {
         if (response.status === 'rejected') {
           const fileWithError = uploads[index].file;
+          // eslint-disable-next-line no-console
           console.log(`O Upload do arquivo ${fileWithError.name} falhou`);
         }
       });

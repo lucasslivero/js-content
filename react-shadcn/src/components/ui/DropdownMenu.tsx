@@ -20,7 +20,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
     inset?: boolean;
-    className: string;
+    className?: string;
   }
 >(({ className, inset, children, ...props }, ref) => (
   <DropdownMenuPrimitive.SubTrigger
@@ -97,7 +97,7 @@ type CheckedState = boolean | 'indeterminate';
 const DropdownMenuCheckboxItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem> & {
-    className: string;
+    className?: string;
     checked?: CheckedState;
   }
 >(({ className, children, checked, ...props }, ref) => (
@@ -123,7 +123,7 @@ DropdownMenuCheckboxItem.displayName = DropdownMenuPrimitive.CheckboxItem.displa
 const DropdownMenuRadioItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem> & {
-    className: string;
+    className?: string;
   }
 >(({ className, children, ...props }, ref) => (
   <DropdownMenuPrimitive.RadioItem
@@ -148,7 +148,7 @@ const DropdownMenuLabel = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
     inset?: boolean;
-    className: string;
+    className?: string;
   }
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
@@ -162,7 +162,7 @@ DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName;
 const DropdownMenuSeparator = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator> & {
-    className: string;
+    className?: string;
   }
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
@@ -177,7 +177,7 @@ function DropdownMenuShortcut({
   className,
   ...props
 }: React.HTMLAttributes<HTMLSpanElement> & {
-  className: string;
+  className?: string;
 }) {
   return (
     <span className={cn('ml-auto text-xs tracking-widest opacity-60', className)} {...props} />

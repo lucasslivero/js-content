@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-import { ClientsService } from '../services/ClientsService';
+import { ClientsService } from '../services/clientsService';
 
 export function useClientsInfinity(perPage = 10) {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({

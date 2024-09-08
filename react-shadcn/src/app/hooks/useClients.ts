@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
-import { ClientsService } from '../services/ClientsService';
+import { ClientsService } from '../services/clientsService';
 
 import { usePagination } from './usePagination';
 
