@@ -1,17 +1,12 @@
-type Response = {
-  user: {
-    name: string;
-  };
-};
+import { ErrorTest } from '@/components/error-boundary/ErrorTest';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export function ErrorBoundaryPage() {
-  const user = {
-    userName: 'Lucas Livero',
-  } as unknown as Response;
-
   return (
     <div className="flex">
-      <span className="font-bold">Ola, {user.user.name}</span>
+      <ErrorBoundary fallback={<h1>Cara que onda meu</h1>}>
+        <ErrorTest />
+      </ErrorBoundary>
     </div>
   );
 }
