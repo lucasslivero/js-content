@@ -81,6 +81,18 @@ const data = {
           icon: Settings2,
           description: 'Pagination with Infinity Scroll Page',
         },
+        {
+          title: 'Suspense',
+          url: '/suspense',
+          icon: Settings2,
+          description: 'React Suspense nested components example Page',
+        },
+        {
+          title: 'Error Boundary',
+          url: '/error-boundary',
+          icon: Settings2,
+          description: 'Error Boundary Page to test it flows',
+        },
       ],
     },
   ],

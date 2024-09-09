@@ -23,7 +23,7 @@ interface IUpload {
   progress: number;
 }
 
-export function FileUploader() {
+export default function FileUploaderPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<IFile | null>(null);
   const [uploads, setUploads] = useState<IUpload[]>([]);
