@@ -1,16 +1,6 @@
-import {
-  Atom,
-  Eclipse,
-  Frame,
-  History,
-  LifeBuoy,
-  Link,
-  Rabbit,
-  Send,
-  Settings2,
-  Star,
-} from 'lucide-react';
+import { Atom, Eclipse, Frame, LifeBuoy, Link, Rabbit, Send } from 'lucide-react';
 
+import { ROUTE_LINKS } from '@/app/router/routes';
 import {
   Sidebar,
   SidebarContent,
@@ -56,44 +46,7 @@ const data = {
       url: '#',
       icon: Link,
       isActive: true,
-      items: [
-        {
-          title: 'File Uploader',
-          url: '/file-uploader',
-          icon: History,
-          description: 'File Uploader Page',
-        },
-        {
-          title: 'Optimistic Updates',
-          url: '/optimistic-updates',
-          icon: Star,
-          description: 'Optimistic Updates Page',
-        },
-        {
-          title: 'Pagination',
-          url: '/pagination',
-          icon: Settings2,
-          description: 'Pagination Page',
-        },
-        {
-          title: 'Pagination (Infinity Scroll)',
-          url: '/pagination-infinity-scroll',
-          icon: Settings2,
-          description: 'Pagination with Infinity Scroll Page',
-        },
-        {
-          title: 'Suspense',
-          url: '/suspense',
-          icon: Settings2,
-          description: 'React Suspense nested components example Page',
-        },
-        {
-          title: 'Error Boundary',
-          url: '/error-boundary',
-          icon: Settings2,
-          description: 'Error Boundary Page to test it flows',
-        },
-      ],
+      items: ROUTE_LINKS,
     },
   ],
 

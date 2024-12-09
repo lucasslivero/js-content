@@ -1,5 +1,6 @@
-import { ErrorTest } from '@/components/error-boundary/ErrorTest';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+
+import { ErrorTest } from './ErrorTest';
 
 export function ErrorBoundaryPage() {
   return (

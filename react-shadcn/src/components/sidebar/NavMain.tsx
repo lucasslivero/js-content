@@ -1,4 +1,3 @@
-import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
 import { ChevronRight, Search, type LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -9,6 +8,7 @@ import { Button } from '../ui/Button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/Collapsible';
 import { Drawer, DrawerContent, DrawerTrigger } from '../ui/Drawer';
 import { Input } from '../ui/Input';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
 import { Separator } from '../ui/Separator';
 
 function SidebarSearch({

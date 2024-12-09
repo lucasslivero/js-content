@@ -1,4 +1,4 @@
-import { Clients } from '@/components/pagination/Clients';
+import { Clients } from './Clients';
 
 export default function PaginationPage() {
   return (

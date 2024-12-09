@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/Label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { SuspenseLayout } from '@/ui/layouts/SuspenseLayout';
 
-const PasswordTab = lazy(() => import('@/components/suspense/PasswordTab'));
+const PasswordTab = lazy(() => import('./PasswordTab'));
 
 export default function SuspensePage() {
   return (

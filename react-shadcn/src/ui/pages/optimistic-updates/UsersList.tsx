@@ -1,11 +1,9 @@
-import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar';
-import { Switch } from '@radix-ui/react-switch';
-
 import { useUpdateUser } from '@/app/hooks/useUpdateUser';
 import { useUsers } from '@/app/hooks/useUsers';
 import { cn } from '@/app/libs/utils';
-
-import { Skeleton } from '../ui/Skeleton';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { Switch } from '@/components/ui/Switch';
 
 export function UsersList() {
   const { users, isLoading } = useUsers();

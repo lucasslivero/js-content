@@ -1,5 +1,5 @@
-import { UserForm } from '@/components/optimistic-updates/UserForm';
-import { UsersList } from '@/components/optimistic-updates/UsersList';
+import { UserForm } from './UserForm';
+import { UsersList } from './UsersList';
 
 export default function OptimisticUpdatePage() {
   return (

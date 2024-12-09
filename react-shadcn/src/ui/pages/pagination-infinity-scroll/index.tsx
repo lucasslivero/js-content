@@ -1,4 +1,4 @@
-import { ClientsInfinity } from '@/components/pagination-infinity-scroll/ClientsInfinity';
+import { ClientsInfinity } from './ClientsInfinity';
 
 export default function PaginationInfinityScrollPage() {
   return (
