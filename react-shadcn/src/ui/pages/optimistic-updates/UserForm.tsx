@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useCreateUser } from '@/app/hooks/useCreateUser';
@@ -11,7 +11,7 @@ export function UserForm() {
 
   const { createUser } = useCreateUser();
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     try {

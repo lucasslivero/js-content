@@ -1,4 +1,5 @@
 import { type LucideIcon } from 'lucide-react';
+import { ComponentProps } from 'react';
 import { Link } from 'react-router-dom';
 
 import { cn } from '@/app/libs/utils';
@@ -16,7 +17,7 @@ export function NavSecondary({
       url: string;
     }[];
   }[];
-} & React.ComponentProps<'ul'>) {
+} & ComponentProps<'ul'>) {
   if (!items?.length) {
     return null;
   }

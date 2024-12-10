@@ -1,4 +1,5 @@
 import { MoreHorizontal, type LucideIcon } from 'lucide-react';
+import { ComponentProps } from 'react';
 import { Link } from 'react-router-dom';
 
 import { cn } from '@/app/libs/utils';
@@ -21,7 +22,7 @@ export function NavProjects({
     url: string;
     icon: LucideIcon;
   }[];
-} & React.ComponentProps<'ul'>) {
+} & ComponentProps<'ul'>) {
   return (
     <ul className={cn('grid gap-0.5', className)}>
       {projects.map((item) => (

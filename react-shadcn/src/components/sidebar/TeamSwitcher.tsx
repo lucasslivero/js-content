@@ -1,5 +1,5 @@
 import { ChevronsUpDown, Plus } from 'lucide-react';
-import * as React from 'react';
+import { ElementType, useState } from 'react';
 
 import {
   DropdownMenu,
@@ -16,11 +16,11 @@ export function TeamSwitcher({
 }: {
   teams: {
     name: string;
-    logo: React.ElementType;
+    logo: ElementType;
     plan: string;
   }[];
 }) {
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  const [activeTeam, setActiveTeam] = useState(teams[0]);
 
   return (
     <DropdownMenu>

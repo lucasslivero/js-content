@@ -1,4 +1,11 @@
-import React, { createContext, useCallback, useMemo, useState } from 'react';
+import {
+  ComponentPropsWithoutRef,
+  createContext,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 
 import { cn } from '@/app/libs/utils';
 import { Button } from '@/components/ui/Button';
@@ -16,7 +23,7 @@ interface IStepperProps {
   initialStep?: number;
   steps: {
     label: string;
-    content: React.ReactNode;
+    content: ReactNode;
   }[];
 }
 
@@ -56,7 +63,7 @@ export function Stepper({ steps, initialStep = 0 }: IStepperProps) {
   );
 }
 
-export function StepperFooter({ children }: { children: React.ReactNode }) {
+export function StepperFooter({ children }: { children: ReactNode }) {
   return <footer className="mt-6 flex justify-end gap-2">{children}</footer>;
 }
 
@@ -66,7 +73,7 @@ export function StepperPreviousButton({
   type = 'button',
   onClick,
   ...props
-}: React.ComponentPropsWithoutRef<typeof Button> & typeof Button) {
+}: ComponentPropsWithoutRef<typeof Button>) {
   const { previousStep } = useStepper();
 
   return (
@@ -81,7 +88,7 @@ export function StepperNextButton({
   type = 'button',
   onClick,
   ...props
-}: React.ComponentPropsWithoutRef<typeof Button> & typeof Button) {
+}: ComponentPropsWithoutRef<typeof Button>) {
   const { nextStep } = useStepper();
 
   return (

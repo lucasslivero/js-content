@@ -1,7 +1,7 @@
-import * as React from 'react';
+import { useState } from 'react';
 
 export function useSidebar() {
-  const [state, setState] = React.useState<'closed' | 'open'>('open');
+  const [state, setState] = useState<'closed' | 'open'>('open');
 
   return {
     open: state === 'open',

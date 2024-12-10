@@ -1,6 +1,6 @@
 import { VariantProps, cva } from 'class-variance-authority';
 import { Loader2 } from 'lucide-react';
-import React from 'react';
+import { ReactNode } from 'react';
 
 import { cn } from '@/app/libs/utils';
 
@@ -33,7 +33,7 @@ interface ISpinnerContentProps
   extends VariantProps<typeof spinnerVariants>,
     VariantProps<typeof loaderVariants> {
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export function Spinner({ size, show, children, className }: ISpinnerContentProps) {

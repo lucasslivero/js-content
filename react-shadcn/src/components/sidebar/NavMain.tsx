@@ -1,4 +1,5 @@
 import { ChevronRight, Search, type LucideIcon } from 'lucide-react';
+import { ComponentProps } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useIsMobile } from '@/app/hooks/useMobile';
@@ -122,8 +123,8 @@ export function NavMain({
       url: string;
     }[];
   }[];
-  searchResults: React.ComponentProps<typeof SidebarSearch>['results'];
-} & React.ComponentProps<'ul'>) {
+  searchResults: ComponentProps<typeof SidebarSearch>['results'];
+} & ComponentProps<'ul'>) {
   return (
     <ul className={cn('grid gap-0.5', className)}>
       <li>
