@@ -1,0 +1,3 @@
+- ${file(src/lambdas/dynamoDB/serverless.yml):resources}
+- ${file(src/lambdas/s3/serverless.yml):resources}
+- ${file(src/lambdas/cognito/serverless.yml):resources}

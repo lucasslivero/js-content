@@ -18,7 +18,7 @@
     "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
-      "@functions/*": ["src/functions/*"],
+      "@functions/*": ["src/lambdas/*"],
       "@libs/*": ["src/libs/*"],
       "@utils/*": ["src/utils/*"]
     }

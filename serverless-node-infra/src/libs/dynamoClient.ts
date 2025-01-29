@@ -6,7 +6,7 @@ const isLocal = process.env?.STAGE === 'dev';
 const client = new DynamoDBClient({
   ...(isLocal && {
     endpoint: 'http://localhost:8000',
-    credentials: fromIni({ profile: 'app' }),
+    credentials: fromIni({ profile: 'default' }),
   }),
 });
 

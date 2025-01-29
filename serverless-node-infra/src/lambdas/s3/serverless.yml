@@ -1,0 +1,41 @@
+functions:
+  s3GetPresignedURL:
+    handler: src/lambdas/s3/getPresignedURL.handler
+    events:
+      - httpApi:
+          path: /s3/getPresignedURL
+          method: POST
+  s3ListFiles:
+    handler: src/lambdas/s3/listFiles.handler
+    events:
+      - httpApi:
+          path: /s3/listFiles
+          method: GET
+  s3DeleteFile:
+    handler: src/lambdas/s3/deleteFile.handler
+    events:
+      - httpApi:
+          path: /s3/deleteFile
+          method: GET
+
+resources:
+  FileUploaderBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: serverless-node-infra-uploaded-files
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - Id: myCORSRuleId1
+            AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+            AllowedOrigins:
+              - '*'
+            MaxAge: 3600

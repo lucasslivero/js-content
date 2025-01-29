@@ -1,0 +1,62 @@
+functions:
+  dynamoDBlistProducts:
+    handler: src/lambdas/dynamoDB/listProducts.handler
+    events:
+      - httpApi:
+          path: /products
+          method: GET
+  dynamoDBgetProduct:
+    handler: src/lambdas/dynamoDB/getProduct.handler
+    events:
+      - httpApi:
+          path: /products/{productId}
+          method: GET
+  dynamoDBcreateProduct:
+    handler: src/lambdas/dynamoDB/createProduct.handler
+    events:
+      - httpApi:
+          path: /products
+          method: POST
+  dynamoDBupdateProduct:
+    handler: src/lambdas/dynamoDB/updateProduct.handler
+    events:
+      - httpApi:
+          path: /products/{productId}
+          method: PUT
+  dynamoDBdeleteProduct:
+    handler: src/lambdas/dynamoDB/deleteProduct.handler
+    events:
+      - httpApi:
+          path: /products/{productId}
+          method: DELETE
+
+resources:
+  ProductsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ProductsTable
+      BillingMode: PAY_PER_REQUEST
+      # PointInTimeRecoverySpecification:
+      # PointInTimeRecoveryEnabled: true
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+  UploadedFilesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: UploadedFiles
+      BillingMode: PAY_PER_REQUEST
+      # PointInTimeRecoverySpecification:
+      # PointInTimeRecoveryEnabled: true
+      AttributeDefinitions:
+        - AttributeName: fileKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: fileKey
+          KeyType: HASH
+      TimeToLiveSpecification:
+        Enabled: true
+        AttributeName: expiresAt
