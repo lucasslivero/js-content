@@ -1,42 +1,42 @@
 functions:
   cognitoSignUp:
-    handler: src/lambdas/cognito/signUp.handler
+    handler: src/resources/cognito/lambdas/signUp.handler
     events:
       - httpApi:
           path: /auth/sign-up
           method: POST
   cognitoAccountConfirmation:
-    handler: src/lambdas/cognito/accountConfirmation.handler
+    handler: src/resources/cognito/lambdas/accountConfirmation.handler
     events:
       - httpApi:
           path: /auth/account-confirmation
           method: POST
   cognitoSignIn:
-    handler: src/lambdas/cognito/signIn.handler
+    handler: src/resources/cognito/lambdas/signIn.handler
     events:
       - httpApi:
           path: /auth/sign-in
           method: POST
   cognitoRefreshToken:
-    handler: src/lambdas/cognito/refreshToken.handler
+    handler: src/resources/cognito/lambdas/refreshToken.handler
     events:
       - httpApi:
           path: /auth/refresh-token
           method: POST
   cognitoForgotPassword:
-    handler: src/lambdas/cognito/forgotPassword.handler
+    handler: src/resources/cognito/lambdas/forgotPassword.handler
     events:
       - httpApi:
           path: /auth/forgot-password
           method: POST
   cognitoResetPassword:
-    handler: src/lambdas/cognito/resetPassword.handler
+    handler: src/resources/cognito/lambdas/resetPassword.handler
     events:
       - httpApi:
           path: /auth/reset-password
           method: POST
   cognitoUserProfile:
-    handler: src/lambdas/cognito/userProfile.handler
+    handler: src/resources/cognito/lambdas/userProfile.handler
     events:
       - httpApi:
           path: /user-profile
@@ -44,7 +44,7 @@ functions:
           authorizer:
             name: CognitoAuthorizer
   cognitoCustomMessage:
-    handler: src/lambdas/cognito/customMessage.handler
+    handler: src/resources/cognito/lambdas/customMessage.handler
     events:
       - cognitoUserPool:
           pool: UserPool

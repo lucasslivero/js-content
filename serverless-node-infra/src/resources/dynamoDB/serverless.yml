@@ -1,30 +1,30 @@
 functions:
   dynamoDBlistProducts:
-    handler: src/lambdas/dynamoDB/listProducts.handler
+    handler: src/resources/dynamoDB/lambdas/listProducts.handler
     events:
       - httpApi:
           path: /products
           method: GET
   dynamoDBgetProduct:
-    handler: src/lambdas/dynamoDB/getProduct.handler
+    handler: src/resources/dynamoDB/lambdas/getProduct.handler
     events:
       - httpApi:
           path: /products/{productId}
           method: GET
   dynamoDBcreateProduct:
-    handler: src/lambdas/dynamoDB/createProduct.handler
+    handler: src/resources/dynamoDB/lambdas/createProduct.handler
     events:
       - httpApi:
           path: /products
           method: POST
   dynamoDBupdateProduct:
-    handler: src/lambdas/dynamoDB/updateProduct.handler
+    handler: src/resources/dynamoDB/lambdas/updateProduct.handler
     events:
       - httpApi:
           path: /products/{productId}
           method: PUT
   dynamoDBdeleteProduct:
-    handler: src/lambdas/dynamoDB/deleteProduct.handler
+    handler: src/resources/dynamoDB/lambdas/deleteProduct.handler
     events:
       - httpApi:
           path: /products/{productId}

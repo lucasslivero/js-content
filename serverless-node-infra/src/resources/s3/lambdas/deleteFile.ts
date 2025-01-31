@@ -1,9 +1,10 @@
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { DeleteCommand } from '@aws-sdk/lib-dynamodb';
+import type { APIGatewayProxyEventV2 } from 'aws-lambda';
+
 import { dynamoClient } from '@libs/dynamoClient';
 import { s3Client } from '@libs/s3Client';
 import { response } from '@utils/response';
-import { APIGatewayProxyEventV2 } from 'aws-lambda';
 
 export async function handler(event: APIGatewayProxyEventV2) {
   const fileKey = event.queryStringParameters?.fileKey;

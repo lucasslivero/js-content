@@ -1,18 +1,18 @@
 functions:
   s3GetPresignedURL:
-    handler: src/lambdas/s3/getPresignedURL.handler
+    handler: src/resources/s3/lambdas/getPresignedURL.handler
     events:
       - httpApi:
           path: /s3/getPresignedURL
           method: POST
   s3ListFiles:
-    handler: src/lambdas/s3/listFiles.handler
+    handler: src/resources/s3/lambdas/listFiles.handler
     events:
       - httpApi:
           path: /s3/listFiles
           method: GET
   s3DeleteFile:
-    handler: src/lambdas/s3/deleteFile.handler
+    handler: src/resources/s3/lambdas/deleteFile.handler
     events:
       - httpApi:
           path: /s3/deleteFile

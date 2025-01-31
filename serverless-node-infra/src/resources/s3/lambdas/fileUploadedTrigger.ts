@@ -1,6 +1,7 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import type { S3Event } from 'aws-lambda';
+
 import { dynamoClient } from '@libs/dynamoClient';
-import { S3Event } from 'aws-lambda';
 
 export async function handler(event: S3Event) {
   const commands = event.Records.map((record) => {

@@ -1,4 +1,5 @@
 import { ScanCommand } from '@aws-sdk/lib-dynamodb';
+
 import { dynamoClient } from '@libs/dynamoClient';
 import { response } from '@utils/response';
 

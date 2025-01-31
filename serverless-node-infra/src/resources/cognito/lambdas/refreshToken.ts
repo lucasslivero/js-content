@@ -1,8 +1,9 @@
 import { InitiateAuthCommand } from '@aws-sdk/client-cognito-identity-provider';
+import type { APIGatewayProxyEventV2 } from 'aws-lambda';
+
 import { cognitoClient } from '@libs/cognitoClient';
 import { bodyParser } from '@utils/bodyParser';
 import { response } from '@utils/response';
-import { APIGatewayProxyEventV2 } from 'aws-lambda';
 
 export async function handler(event: APIGatewayProxyEventV2) {
   try {

@@ -1,24 +1,24 @@
-import { ConfirmForgotPasswordCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { ConfirmSignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
+import type { APIGatewayProxyEventV2 } from 'aws-lambda';
+
 import { cognitoClient } from '@libs/cognitoClient';
 import { bodyParser } from '@utils/bodyParser';
 import { response } from '@utils/response';
-import { APIGatewayProxyEventV2 } from 'aws-lambda';
 
 export async function handler(event: APIGatewayProxyEventV2) {
   try {
-    const { email, code, newPassword } = bodyParser(event.body);
+    const { email, code } = bodyParser(event.body);
 
-    const command = new ConfirmForgotPasswordCommand({
+    const command = new ConfirmSignUpCommand({
       ClientId: process.env.COGNITO_CLIENT_ID,
       Username: email,
       ConfirmationCode: code,
-      Password: newPassword,
     });
 
     await cognitoClient.send(command);
 
     return response(204);
-  } catch {
+  } catch (error) {
     return response(500, { error: 'Internal server error !' });
   }
 }

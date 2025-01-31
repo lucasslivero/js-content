@@ -78,10 +78,8 @@ package:
   individually: true
 
 functions:
-  - ${file(src/lambdas/dynamoDB/serverless.yml):functions}
-  - ${file(src/lambdas/cognito/serverless.yml):functions}
-  - ${file(src/lambdas/s3/serverless.yml):functions}
+  - ${file(src/resources/dynamoDB/serverless.yml):functions}
+  - ${file(src/resources/cognito/serverless.yml):functions}
+  - ${file(src/resources/s3/serverless.yml):functions}
 resources:
   Resources: ${file(resources.yml)}
-
-
