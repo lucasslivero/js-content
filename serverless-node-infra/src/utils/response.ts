@@ -1,4 +1,4 @@
-import { APIGatewayProxyResultV2 } from 'aws-lambda';
+import type { APIGatewayProxyResultV2 } from 'aws-lambda';
 
 export function response(statusCode: number, body?: Record<string, any>): APIGatewayProxyResultV2 {
   return {

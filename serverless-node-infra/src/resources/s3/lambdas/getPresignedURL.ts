@@ -10,6 +10,8 @@ import { s3Client } from '@libs/s3Client';
 import { bodyParser } from '@utils/bodyParser';
 import { response } from '@utils/response';
 
+const { UPLOAD_FILE_TABLE, FILE_UPLOAD_BUCKET } = process.env;
+
 export async function handler(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
   const { filename, type } = bodyParser(event.body);
 
@@ -22,14 +24,14 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
       const fileKey = `${randomUUID()}-${filename}`;
 
       const s3Command = new PutObjectCommand({
-        Bucket: process.env.BUCKET_UPLOAD_NAME,
+        Bucket: FILE_UPLOAD_BUCKET,
         Key: fileKey,
       });
 
       const signedURL = await getSignedUrl(s3Client, s3Command, { expiresIn: 60 });
 
       const command = new PutCommand({
-        TableName: 'UploadedFiles',
+        TableName: UPLOAD_FILE_TABLE,
         Item: {
           fileKey,
           originalFileName: filename,
@@ -44,7 +46,7 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
     }
     if (type === 'GET') {
       const s3Command = new GetObjectCommand({
-        Bucket: process.env.BUCKET_UPLOAD_NAME,
+        Bucket: FILE_UPLOAD_BUCKET,
         Key: filename,
       });
 

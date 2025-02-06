@@ -6,19 +6,21 @@ import { dynamoClient } from '@libs/dynamoClient';
 import { s3Client } from '@libs/s3Client';
 import { response } from '@utils/response';
 
+const { UPLOAD_FILE_TABLE, FILE_UPLOAD_BUCKET } = process.env;
+
 export async function handler(event: APIGatewayProxyEventV2) {
   const fileKey = event.queryStringParameters?.fileKey;
 
   try {
     const s3Command = new DeleteObjectCommand({
-      Bucket: process.env.BUCKET_UPLOAD_NAME,
+      Bucket: FILE_UPLOAD_BUCKET,
       Key: fileKey,
     });
 
     await s3Client.send(s3Command);
 
     const command = new DeleteCommand({
-      TableName: 'UploadedFiles',
+      TableName: UPLOAD_FILE_TABLE,
       Key: {
         fileKey,
       },

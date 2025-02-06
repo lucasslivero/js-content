@@ -5,13 +5,15 @@ import { dynamoClient } from '@libs/dynamoClient';
 import { bodyParser } from '@utils/bodyParser';
 import { response } from '@utils/response';
 
+const { PRODUCTS_TABLE } = process.env;
+
 export async function handler(event: APIGatewayProxyEventV2) {
   const body = bodyParser(event.body);
 
   const productId = event.pathParameters?.productId;
 
   const command = new UpdateCommand({
-    TableName: 'ProductsTable',
+    TableName: PRODUCTS_TABLE,
     Key: {
       id: productId,
     },

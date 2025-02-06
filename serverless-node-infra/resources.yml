@@ -1,3 +1,0 @@
-- ${file(src/resources/dynamoDB/serverless.yml):resources}
-- ${file(src/resources/s3/serverless.yml):resources}
-- ${file(src/resources/cognito/serverless.yml):resources}

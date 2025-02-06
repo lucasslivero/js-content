@@ -1,0 +1,24 @@
+functions:
+  orderProducer:
+    handler: src/resources/sqs/lambdas/orderProducer.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - sqs:SendMessage
+        Resource: !GetAtt OrderSQS.Arn
+    events:
+      - httpApi:
+          path: /sqs/producer
+          method: POST
+
+resources:
+  Resources:
+    OrderSQS:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: 'OrderQueue'
+        VisibilityTimeout: 60
+        DelaySeconds: 0
+        MessageRetentionPeriod: 86400 # 1 Day
+        MaximumMessageSize: 262144 # 256 KB
+        ReceiveMessageWaitTimeSeconds: 20

@@ -1,41 +1,106 @@
 functions:
   s3GetPresignedURL:
+    role: S3UploadRole
     handler: src/resources/s3/lambdas/getPresignedURL.handler
     events:
       - httpApi:
           path: /s3/getPresignedURL
           method: POST
   s3ListFiles:
+    role: S3UploadRole
     handler: src/resources/s3/lambdas/listFiles.handler
     events:
       - httpApi:
           path: /s3/listFiles
           method: GET
   s3DeleteFile:
+    role: S3UploadRole
     handler: src/resources/s3/lambdas/deleteFile.handler
     events:
       - httpApi:
           path: /s3/deleteFile
           method: GET
-
+  s3UpdateTrigger:
+    role: S3UploadRole
+    handler: src/resources/s3/lambdas/fileUploadedTrigger.handler
+    events:
+      - s3:
+          bucket: !Ref FileUploaderBucket
+          event: s3:ObjectCreated:*
+          existing: true
 resources:
-  FileUploaderBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: serverless-node-infra-uploaded-files
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-      CorsConfiguration:
-        CorsRules:
-          - Id: myCORSRuleId1
-            AllowedHeaders:
-              - '*'
-            AllowedMethods:
-              - GET
-              - PUT
-            AllowedOrigins:
-              - '*'
-            MaxAge: 3600
+  Resources:
+    FileUploaderBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: serverless-node-infra-uploaded-files
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+        CorsConfiguration:
+          CorsRules:
+            - Id: myCORSRuleId1
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+              AllowedOrigins:
+                - '*'
+              MaxAge: 3600
+    UploadedFilesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: UploadedFiles
+        BillingMode: PAY_PER_REQUEST
+        # PointInTimeRecoverySpecification:
+        # PointInTimeRecoveryEnabled: true
+        AttributeDefinitions:
+          - AttributeName: fileKey
+            AttributeType: S
+        KeySchema:
+          - AttributeName: fileKey
+            KeyType: HASH
+        TimeToLiveSpecification:
+          Enabled: true
+          AttributeName: expiresAt
+    S3UploadRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: s3UploadRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: dynamoDBPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:PutItem
+                    - dynamodb:DeleteItem
+                    - dynamodb:GetItem
+                    - dynamodb:Scan
+                    - dynamodb:UpdateItem
+                  Resource:
+                    - !GetAtt UploadedFilesTable.Arn
+          - PolicyName: s3Policy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - s3:DeleteObject
+                    - s3:GetObject
+                    - s3:PutObject
+                  Resource:
+                    - !GetAtt FileUploaderBucket.Arn
+                    - !Join ['/', [!GetAtt FileUploaderBucket.Arn, '*']]

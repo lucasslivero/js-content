@@ -1,41 +1,48 @@
 functions:
   cognitoSignUp:
+    role: CognitoRole
     handler: src/resources/cognito/lambdas/signUp.handler
     events:
       - httpApi:
           path: /auth/sign-up
           method: POST
   cognitoAccountConfirmation:
+    role: CognitoRole
     handler: src/resources/cognito/lambdas/accountConfirmation.handler
     events:
       - httpApi:
           path: /auth/account-confirmation
           method: POST
   cognitoSignIn:
+    role: CognitoRole
     handler: src/resources/cognito/lambdas/signIn.handler
     events:
       - httpApi:
           path: /auth/sign-in
           method: POST
   cognitoRefreshToken:
+    role: CognitoRole
     handler: src/resources/cognito/lambdas/refreshToken.handler
     events:
       - httpApi:
           path: /auth/refresh-token
           method: POST
   cognitoForgotPassword:
+    role: CognitoRole
     handler: src/resources/cognito/lambdas/forgotPassword.handler
     events:
       - httpApi:
           path: /auth/forgot-password
           method: POST
   cognitoResetPassword:
+    role: CognitoRole
     handler: src/resources/cognito/lambdas/resetPassword.handler
     events:
       - httpApi:
           path: /auth/reset-password
           method: POST
   cognitoUserProfile:
+    role: CognitoRole
     handler: src/resources/cognito/lambdas/userProfile.handler
     events:
       - httpApi:
@@ -44,6 +51,7 @@ functions:
           authorizer:
             name: CognitoAuthorizer
   cognitoCustomMessage:
+    role: CognitoRole
     handler: src/resources/cognito/lambdas/customMessage.handler
     events:
       - cognitoUserPool:
@@ -53,49 +61,71 @@ functions:
           forceDeploy: true
 
 resources:
-  UserPool:
-    Type: AWS::Cognito::UserPool
-    Properties:
-      UserPoolName: UserPool
-      DeletionProtection: INACTIVE
-      MfaConfiguration: OFF
-      AutoVerifiedAttributes:
-        - email
-      AdminCreateUserConfig:
-        AllowAdminCreateUserOnly: true
-      UsernameAttributes:
-        - email
-      AccountRecoverySetting:
-        RecoveryMechanisms:
-          - Name: admin_only
-            Priority: 1
-      Policies:
-        PasswordPolicy:
-          MinimumLength: 8
-          RequireLowercase: true
-          RequireNumbers: false
-          RequireSymbols: true
-          RequireUppercase: false
-          TemporaryPasswordValidityDays: 2
-      Schema:
-        - Name: given_name
-          Mutable: true
-          Required: true
-          AttributeDataType: String
-        - Name: family_name
-          Mutable: true
-          Required: true
-          AttributeDataType: String
-  UserPoolClient:
-    Type: AWS::Cognito::UserPoolClient
-    Properties:
-      UserPoolId: !Ref UserPool
-      ClientName: UserPoolClient
-      ExplicitAuthFlows:
-        - ALLOW_USER_PASSWORD_AUTH
-        - ALLOW_REFRESH_TOKEN_AUTH
-      TokenValidityUnits:
-        AccessToken: hours
-        RefreshToken: hours
-      AccessTokenValidity: 3
-      RefreshTokenValidity: 720 # 30 days
+  Resources:
+    UserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: UserPool
+        DeletionProtection: INACTIVE
+        MfaConfiguration: OFF
+        AutoVerifiedAttributes:
+          - email
+        AdminCreateUserConfig:
+          AllowAdminCreateUserOnly: true
+        UsernameAttributes:
+          - email
+        AccountRecoverySetting:
+          RecoveryMechanisms:
+            - Name: admin_only
+              Priority: 1
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireNumbers: false
+            RequireSymbols: true
+            RequireUppercase: false
+            TemporaryPasswordValidityDays: 2
+        Schema:
+          - Name: given_name
+            Mutable: true
+            Required: true
+            AttributeDataType: String
+          - Name: family_name
+            Mutable: true
+            Required: true
+            AttributeDataType: String
+    UserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        UserPoolId: !Ref UserPool
+        ClientName: UserPoolClient
+        ExplicitAuthFlows:
+          - ALLOW_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        TokenValidityUnits:
+          AccessToken: hours
+          RefreshToken: hours
+        AccessTokenValidity: 3
+        RefreshTokenValidity: 720 # 30 days
+    CognitoRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: dynamoDBRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: dynamoDBPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - cognito-idp:AdminGetUser
+                  Resource: !GetAtt UserPool.Arn
