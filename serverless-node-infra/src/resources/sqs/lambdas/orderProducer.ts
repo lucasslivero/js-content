@@ -12,7 +12,7 @@ const { ORDER_QUEUE_URL } = process.env;
 export async function handler(event: LambdaFunctionURLEvent) {
   const { message } = bodyParser(event.body);
   const item = {
-    id: randomUUID(),
+    orderId: randomUUID(),
     message,
   };
   const command = new SendMessageCommand({

@@ -1,6 +1,8 @@
 functions:
   orderProducer:
     handler: src/resources/sqs/lambdas/orderProducer.handler
+    environment:
+      ORDER_QUEUE_URL: !GetAtt OrderSQS.QueueUrl
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -10,6 +12,30 @@ functions:
       - httpApi:
           path: /sqs/producer
           method: POST
+
+  processPaymentConsumer:
+    handler: src/resources/sqs/lambdas/processPaymentConsumer.handler
+    environment:
+      PAYMENTS_TABLE: PaymentsTable
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - sqs:ReceiveMessage
+          - sqs:DeleteMessage
+          - sqs:GetQueueAttributes
+        Resource: !GetAtt OrderSQS.Arn
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+        Resource:
+          - !GetAtt PaymentsTable.Arn
+    events:
+      - sqs:
+          arn: !GetAtt OrderSQS.Arn
+          batchSize: 10 # Default 10
+          maximumBatchingWindow: 10
+          functionResponseType: ReportBatchItemFailures
 
 resources:
   Resources:
@@ -22,3 +48,53 @@ resources:
         MessageRetentionPeriod: 86400 # 1 Day
         MaximumMessageSize: 262144 # 256 KB
         ReceiveMessageWaitTimeSeconds: 20
+        RedriveAllowPolicy:
+          redrivePermission: denyAll
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt OrderDLQ.Arn
+          maxReceiveCount: 3
+    OrderDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: 'OrderQueue-DLQ'
+        VisibilityTimeout: 60
+        DelaySeconds: 0
+        MessageRetentionPeriod: 1209600 # 14 Days
+        MaximumMessageSize: 262144 # 256 KB
+        ReceiveMessageWaitTimeSeconds: 20
+    PaymentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: PaymentsTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+    DLQAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: 'OrderQueueDLQAlerts'
+        AlarmDescription: 'Alarm dlq messages when we have 1 or more failed messages in 5 minutes'
+        Namespace: 'AWS/SQS'
+        MetricName: 'ApproximateNumberOfMessagesVisible'
+        Dimensions:
+          - Name: 'QueueName'
+            Value: !GetAtt OrderDLQ.QueueName
+        Statistic: 'Sum'
+        Period: 300 # 5 Minutes
+        DatapointsToAlarm: 1
+        EvaluationPeriods: 1
+        Threshold: 1
+        ComparisonOperator: 'GreaterThanOrEqualToThreshold'
+        AlarmActions:
+          - !Ref OrderDLQAlert
+    OrderDLQAlert:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: 'OrderDLQAlert'
+        Subscription:
+          - Endpoint: ${env:ORDER_DLQ_EMAIL}
+            Protocol: email
