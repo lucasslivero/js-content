@@ -28,6 +28,13 @@ functions:
           bucket: !Ref FileUploaderBucket
           event: s3:ObjectCreated:*
           existing: true
+  s3CompleteMPU:
+    role: S3UploadRole
+    handler: src/resources/s3/lambdas/completeMPU.handler
+    events:
+      - httpApi:
+          path: /s3/completeMPU
+          method: POST
 resources:
   Resources:
     FileUploaderBucket:

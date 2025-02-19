@@ -1,6 +1,11 @@
 import { randomUUID } from 'crypto';
 
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  CreateMultipartUploadCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  UploadPartCommand,
+} from '@aws-sdk/client-s3';
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
@@ -13,7 +18,7 @@ import { response } from '@utils/response';
 const { UPLOAD_FILE_TABLE, FILE_UPLOAD_BUCKET } = process.env;
 
 export async function handler(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const { filename, type } = bodyParser(event.body);
+  const { filename, type, totalChunks } = bodyParser(event.body);
 
   if (!filename || !type) {
     return response(400, { error: 'File name is required.' });
@@ -53,9 +58,57 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
       const signedURL = await getSignedUrl(s3Client, s3Command, { expiresIn: 60 });
       return response(200, { signedURL });
     }
+    if (type === 'MPU') {
+      const key = `${randomUUID()}-${filename}`;
+
+      const createMPUCommand = new CreateMultipartUploadCommand({
+        Bucket: FILE_UPLOAD_BUCKET,
+        Key: key,
+      });
+
+      const { UploadId } = await s3Client.send(createMPUCommand);
+
+      if (!UploadId) {
+        return response(500, { error: 'Failed creating multipart upload.' });
+      }
+
+      const signedURLPromises = [];
+
+      for (let partNumber = 1; partNumber <= totalChunks; partNumber += 1) {
+        const uploadPartCommand = new UploadPartCommand({
+          Bucket: FILE_UPLOAD_BUCKET,
+          Key: key,
+          UploadId,
+          PartNumber: partNumber,
+        });
+
+        signedURLPromises.push(getSignedUrl(s3Client, uploadPartCommand, { expiresIn: 3600 }));
+      }
+
+      const command = new PutCommand({
+        TableName: UPLOAD_FILE_TABLE,
+        Item: {
+          fileKey: key,
+          originalFileName: filename,
+          status: 'PENDING',
+          expiresAt: Date.now() + 60000,
+        },
+      });
+
+      await dynamoClient.send(command);
+
+      const urls = await Promise.all(signedURLPromises);
+      return response(200, {
+        key,
+        uploadId: UploadId,
+        parts: urls.map((url, index) => ({
+          url,
+          partNumber: index + 1,
+        })),
+      });
+    }
   } catch (error: any) {
     return response(400, error);
   }
-
   return response(400, { message: 'Unsupported type sended.' });
 }
