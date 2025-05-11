@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
 
-import { cn } from '@/app/libs/utils';
+import { bytesToMb, cn, mbToBytes } from '@/app/libs/utils';
 import { IFile, UploadFileService } from '@/app/services/uploadFileService';
 import { Button } from '@/components/ui/Button';
 import {
@@ -65,13 +65,14 @@ export default function FileUploaderPage() {
     });
   }
 
-  function updateProgress(progress: number, index: number) {
+  function updateProgress(progress: number, index: number, accumulator: boolean) {
     setUploads((prevState) => {
       const newState = [...prevState];
       const uploadFile = newState[index];
+      const newProgress = progress + (accumulator ? uploadFile.progress : 0);
       newState[index] = {
         ...uploadFile,
-        progress,
+        progress: Math.min(Math.round(newProgress), 100),
       };
       return newState;
     });
@@ -81,25 +82,96 @@ export default function FileUploaderPage() {
     setIsLoading(true);
     try {
       const uploadFiles = await Promise.all(
-        uploads.map(async ({ file }) => ({
-          file,
-          url: await UploadFileService.getPresignedUrl(file.name, 'PUT'),
-        })),
+        uploads.map(async ({ file }) => {
+          if (bytesToMb(file.size) >= 50) {
+            const chunkSize = mbToBytes(5);
+            const totalChunks = Math.ceil(file.size / chunkSize);
+
+            const { key, parts, uploadId } = await UploadFileService.initiateMPU({
+              filename: file.name,
+              totalChunks,
+            });
+            return {
+              file,
+              chunkSize,
+              key,
+              parts,
+              uploadId,
+              multipart: true,
+            };
+          }
+
+          return {
+            file,
+            url: await UploadFileService.getPresignedUrl(file.name, 'PUT'),
+            multipart: false,
+          };
+        }),
       );
+
+      // const nonMultiPartsUpload = uploadFiles.filter((item) => !item.multipart);
+      // const multiPartUploads = uploadFiles.filter((item) => item.multipart);
+
+      // if (nonMultiPartsUpload.length > 0) {
+
+      // }
 
       const responses = await Promise.allSettled(
-        uploadFiles.map(({ file, url }, index) =>
-          UploadFileService.uploadFile(url, file, (progress) => updateProgress(progress, index)),
-        ),
+        uploadFiles.map(async ({ file, url, parts, chunkSize, multipart }, index) => {
+          if (!multipart) {
+            return UploadFileService.uploadFile(url!, file, (progress) =>
+              updateProgress(progress, index, false),
+            );
+          }
+
+          return Promise.all(
+            parts!.map(async ({ url: partUrl, partNumber }, partIndex) => {
+              const chunkStart = partIndex * chunkSize!;
+              const chunkEnd = Math.min(chunkStart + chunkSize!, file.size);
+
+              const fileChunk = file.slice(chunkStart, chunkEnd);
+
+              return UploadFileService.uploadChunk({
+                url: partUrl,
+                chunk: fileChunk,
+                partNumber,
+                progressFn: () => updateProgress(100 / parts!.length, index, true),
+              });
+            }),
+          );
+        }),
       );
 
+      const mpuActions: Promise<void>[] = [];
       responses.forEach((response, index) => {
+        const upload = uploadFiles[index];
+        if (upload.multipart) {
+          if (response.status === 'rejected') {
+            mpuActions.push(
+              UploadFileService.abortMPU({
+                fileKey: upload.key!,
+                uploadId: upload.uploadId!,
+              }),
+            );
+          } else {
+            mpuActions.push(
+              UploadFileService.completeMPU({
+                fileKey: upload.key!,
+                uploadId: upload.uploadId!,
+                parts: response.value!,
+              }),
+            );
+          }
+        }
         if (response.status === 'rejected') {
-          const fileWithError = uploads[index].file;
           // eslint-disable-next-line no-console
-          console.log(`O Upload do arquivo ${fileWithError.name} falhou`);
+          console.log(`O Upload do arquivo ${upload.file.name} falhou`);
         }
       });
+
+      if (mpuActions.length > 0) {
+        await Promise.all(mpuActions);
+      }
 
       setUploads([]);
       toast.success('Uploads realizados com sucesso !');

@@ -35,6 +35,20 @@ functions:
       - httpApi:
           path: /s3/completeMPU
           method: POST
+  abortMPU:
+    role: S3UploadRole
+    handler: src/resources/s3/lambdas/abortMPU.handler
+    events:
+      - httpApi:
+          path: /s3/abortMPU
+          method: DELETE
+  abortAllMPUs:
+    role: S3UploadRole
+    handler: src/resources/s3/lambdas/abortAllPendingMPU.handler
+    events:
+      - httpApi:
+          path: /s3/abortAllMPUs
+          method: GET
 resources:
   Resources:
     FileUploaderBucket:
