@@ -2,6 +2,9 @@ functions:
   s3GetPresignedURL:
     role: S3UploadRole
     handler: src/resources/s3/lambdas/getPresignedURL.handler
+    environment:
+      UPLOAD_FILE_TABLE: ${env:UPLOAD_FILE_TABLE, self:custom.environment.UPLOAD_FILE_TABLE}
+      FILE_UPLOAD_BUCKET: ${env:FILE_UPLOAD_BUCKET, self:custom.environment.FILE_UPLOAD_BUCKET}
     events:
       - httpApi:
           path: /s3/getPresignedURL
@@ -9,6 +12,9 @@ functions:
   s3ListFiles:
     role: S3UploadRole
     handler: src/resources/s3/lambdas/listFiles.handler
+    environment:
+      UPLOAD_FILE_TABLE: ${env:UPLOAD_FILE_TABLE, self:custom.environment.UPLOAD_FILE_TABLE}
+      FILE_UPLOAD_BUCKET: ${env:FILE_UPLOAD_BUCKET, self:custom.environment.FILE_UPLOAD_BUCKET}
     events:
       - httpApi:
           path: /s3/listFiles
@@ -16,6 +22,9 @@ functions:
   s3DeleteFile:
     role: S3UploadRole
     handler: src/resources/s3/lambdas/deleteFile.handler
+    environment:
+      UPLOAD_FILE_TABLE: ${env:UPLOAD_FILE_TABLE, self:custom.environment.UPLOAD_FILE_TABLE}
+      FILE_UPLOAD_BUCKET: ${env:FILE_UPLOAD_BUCKET, self:custom.environment.FILE_UPLOAD_BUCKET}
     events:
       - httpApi:
           path: /s3/deleteFile
@@ -23,6 +32,9 @@ functions:
   s3UpdateTrigger:
     role: S3UploadRole
     handler: src/resources/s3/lambdas/fileUploadedTrigger.handler
+    environment:
+      UPLOAD_FILE_TABLE: ${env:UPLOAD_FILE_TABLE, self:custom.environment.UPLOAD_FILE_TABLE}
+      FILE_UPLOAD_BUCKET: ${env:FILE_UPLOAD_BUCKET, self:custom.environment.FILE_UPLOAD_BUCKET}
     events:
       - s3:
           bucket: !Ref FileUploaderBucket
@@ -31,6 +43,9 @@ functions:
   s3CompleteMPU:
     role: S3UploadRole
     handler: src/resources/s3/lambdas/completeMPU.handler
+    environment:
+      UPLOAD_FILE_TABLE: ${env:UPLOAD_FILE_TABLE, self:custom.environment.UPLOAD_FILE_TABLE}
+      FILE_UPLOAD_BUCKET: ${env:FILE_UPLOAD_BUCKET, self:custom.environment.FILE_UPLOAD_BUCKET}
     events:
       - httpApi:
           path: /s3/completeMPU
@@ -38,6 +53,9 @@ functions:
   abortMPU:
     role: S3UploadRole
     handler: src/resources/s3/lambdas/abortMPU.handler
+    environment:
+      UPLOAD_FILE_TABLE: ${env:UPLOAD_FILE_TABLE, self:custom.environment.UPLOAD_FILE_TABLE}
+      FILE_UPLOAD_BUCKET: ${env:FILE_UPLOAD_BUCKET, self:custom.environment.FILE_UPLOAD_BUCKET}
     events:
       - httpApi:
           path: /s3/abortMPU
@@ -45,6 +63,9 @@ functions:
   abortAllMPUs:
     role: S3UploadRole
     handler: src/resources/s3/lambdas/abortAllPendingMPU.handler
+    environment:
+      UPLOAD_FILE_TABLE: ${env:UPLOAD_FILE_TABLE, self:custom.environment.UPLOAD_FILE_TABLE}
+      FILE_UPLOAD_BUCKET: ${env:FILE_UPLOAD_BUCKET, self:custom.environment.FILE_UPLOAD_BUCKET}
     events:
       - httpApi:
           path: /s3/abortAllMPUs

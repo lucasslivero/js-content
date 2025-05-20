@@ -18,8 +18,6 @@ build:
     platform: node
     exclude:
       - '@aws-sdk/*'
-    # define:
-    #   require.resolve: undefined
 
 custom:
   serverless-offline:
@@ -65,22 +63,18 @@ provider:
   environment:
     DEBUG: ${env:DEBUG, false}
     STAGE: ${self:provider.stage}
-    # # Cognito # #
-    # COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID, self:custom.environment.COGNITO_CLIENT_ID}
-    # COGNITO_POOL_ID: ${env:COGNITO_POOL_ID, self:custom.environment.COGNITO_POOL_ID}
-    # # DynamoDB # #
-    # PRODUCTS_TABLE: ${env:PRODUCTS_TABLE, self:custom.environment.PRODUCTS_TABLE}
-    # # S3 # #
-    UPLOAD_FILE_TABLE: ${env:UPLOAD_FILE_TABLE, self:custom.environment.UPLOAD_FILE_TABLE}
-    FILE_UPLOAD_BUCKET: ${env:FILE_UPLOAD_BUCKET, self:custom.environment.FILE_UPLOAD_BUCKET}
 
 functions:
   # - ${file(src/resources/cognito/serverless.yml):functions}
   # - ${file(src/resources/dynamoDB/serverless.yml):functions}
-  - ${file(src/resources/s3/serverless.yml):functions}
+  # - ${file(src/resources/s3/serverless.yml):functions}
   # - ${file(src/resources/sqs/serverless.yml):functions}
 
 resources:
+  # - ${file(src/resources/cognito/serverless.yml):resources}
+  # - ${file(src/resources/dynamoDB/serverless.yml):resources}
+  # - ${file(src/resources/s3/serverless.yml):resources}
+  # - ${file(src/resources/sqs/serverless.yml):resources}
   - Resources:
       CloudWatchPolicy:
         Type: AWS::IAM::Policy
@@ -103,10 +97,6 @@ resources:
                         - Ref: 'AWS::AccountId'
                         - 'log-group:/aws/lambda/*:*:*'
           Roles:
-            - Ref: S3UploadRole
+            # - Ref: S3UploadRole
             # - Ref: DynamoDBRole
             # - Ref: CognitoRole
-  # - ${file(src/resources/cognito/serverless.yml):resources}
-  # - ${file(src/resources/dynamoDB/serverless.yml):resources}
-  - ${file(src/resources/s3/serverless.yml):resources}
-  # - ${file(src/resources/sqs/serverless.yml):resources}

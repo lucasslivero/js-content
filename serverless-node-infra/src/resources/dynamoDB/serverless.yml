@@ -2,6 +2,8 @@ functions:
   dynamoDBlistProducts:
     role: DynamoDBRole
     handler: src/resources/dynamoDB/lambdas/listProducts.handler
+    environment:
+      PRODUCTS_TABLE: ${env:PRODUCTS_TABLE, self:custom.environment.PRODUCTS_TABLE}
     events:
       - httpApi:
           path: /dynamoDB/products
@@ -9,6 +11,8 @@ functions:
   dynamoDBgetProduct:
     role: DynamoDBRole
     handler: src/resources/dynamoDB/lambdas/getProduct.handler
+    environment:
+      PRODUCTS_TABLE: ${env:PRODUCTS_TABLE, self:custom.environment.PRODUCTS_TABLE}
     events:
       - httpApi:
           path: /dynamoDB/products/{productId}
@@ -16,6 +20,8 @@ functions:
   dynamoDBcreateProduct:
     role: DynamoDBRole
     handler: src/resources/dynamoDB/lambdas/createProduct.handler
+    environment:
+      PRODUCTS_TABLE: ${env:PRODUCTS_TABLE, self:custom.environment.PRODUCTS_TABLE}
     events:
       - httpApi:
           path: /dynamoDB/products
@@ -23,6 +29,8 @@ functions:
   dynamoDBupdateProduct:
     role: DynamoDBRole
     handler: src/resources/dynamoDB/lambdas/updateProduct.handler
+    environment:
+      PRODUCTS_TABLE: ${env:PRODUCTS_TABLE, self:custom.environment.PRODUCTS_TABLE}
     events:
       - httpApi:
           path: /dynamoDB/products/{productId}
@@ -30,6 +38,8 @@ functions:
   dynamoDBdeleteProduct:
     role: DynamoDBRole
     handler: src/resources/dynamoDB/lambdas/deleteProduct.handler
+    environment:
+      PRODUCTS_TABLE: ${env:PRODUCTS_TABLE, self:custom.environment.PRODUCTS_TABLE}
     events:
       - httpApi:
           path: /dynamoDB/products/{productId}

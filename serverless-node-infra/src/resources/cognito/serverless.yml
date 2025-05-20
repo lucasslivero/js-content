@@ -2,6 +2,9 @@ functions:
   cognitoSignUp:
     role: CognitoRole
     handler: src/resources/cognito/lambdas/signUp.handler
+    environment:
+      COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID, self:custom.environment.COGNITO_CLIENT_ID}
+      COGNITO_POOL_ID: ${env:COGNITO_POOL_ID, self:custom.environment.COGNITO_POOL_ID}
     events:
       - httpApi:
           path: /auth/sign-up
@@ -9,6 +12,9 @@ functions:
   cognitoAccountConfirmation:
     role: CognitoRole
     handler: src/resources/cognito/lambdas/accountConfirmation.handler
+    environment:
+      COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID, self:custom.environment.COGNITO_CLIENT_ID}
+      COGNITO_POOL_ID: ${env:COGNITO_POOL_ID, self:custom.environment.COGNITO_POOL_ID}
     events:
       - httpApi:
           path: /auth/account-confirmation
@@ -16,6 +22,9 @@ functions:
   cognitoSignIn:
     role: CognitoRole
     handler: src/resources/cognito/lambdas/signIn.handler
+    environment:
+      COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID, self:custom.environment.COGNITO_CLIENT_ID}
+      COGNITO_POOL_ID: ${env:COGNITO_POOL_ID, self:custom.environment.COGNITO_POOL_ID}
     events:
       - httpApi:
           path: /auth/sign-in
@@ -23,6 +32,9 @@ functions:
   cognitoRefreshToken:
     role: CognitoRole
     handler: src/resources/cognito/lambdas/refreshToken.handler
+    environment:
+      COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID, self:custom.environment.COGNITO_CLIENT_ID}
+      COGNITO_POOL_ID: ${env:COGNITO_POOL_ID, self:custom.environment.COGNITO_POOL_ID}
     events:
       - httpApi:
           path: /auth/refresh-token
@@ -30,6 +42,9 @@ functions:
   cognitoForgotPassword:
     role: CognitoRole
     handler: src/resources/cognito/lambdas/forgotPassword.handler
+    environment:
+      COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID, self:custom.environment.COGNITO_CLIENT_ID}
+      COGNITO_POOL_ID: ${env:COGNITO_POOL_ID, self:custom.environment.COGNITO_POOL_ID}
     events:
       - httpApi:
           path: /auth/forgot-password
@@ -37,6 +52,9 @@ functions:
   cognitoResetPassword:
     role: CognitoRole
     handler: src/resources/cognito/lambdas/resetPassword.handler
+    environment:
+      COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID, self:custom.environment.COGNITO_CLIENT_ID}
+      COGNITO_POOL_ID: ${env:COGNITO_POOL_ID, self:custom.environment.COGNITO_POOL_ID}
     events:
       - httpApi:
           path: /auth/reset-password
@@ -44,6 +62,9 @@ functions:
   cognitoUserProfile:
     role: CognitoRole
     handler: src/resources/cognito/lambdas/userProfile.handler
+    environment:
+      COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID, self:custom.environment.COGNITO_CLIENT_ID}
+      COGNITO_POOL_ID: ${env:COGNITO_POOL_ID, self:custom.environment.COGNITO_POOL_ID}
     events:
       - httpApi:
           path: /user-profile
@@ -53,6 +74,9 @@ functions:
   cognitoCustomMessage:
     role: CognitoRole
     handler: src/resources/cognito/lambdas/customMessage.handler
+    environment:
+      COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID, self:custom.environment.COGNITO_CLIENT_ID}
+      COGNITO_POOL_ID: ${env:COGNITO_POOL_ID, self:custom.environment.COGNITO_POOL_ID}
     events:
       - cognitoUserPool:
           pool: UserPool
