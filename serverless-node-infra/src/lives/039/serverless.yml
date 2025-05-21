@@ -1,0 +1,128 @@
+# Title: Asynchronous Reporting Service with Serverless Framework
+# Description: Report generator using Resend to send them trough emails
+
+functions:
+  populateDynamo:
+    role: live039Role
+    handler: src/lives/039/lambdas/http/populateDynamo.handler
+    environment:
+      DYNAMO_LEADS_TABLE: !Ref LeadsTable
+      GENERATE_REPORT_QUEUE_URL: !Ref GenerateReportQueue
+      REPORTS_BUCKET_NAME: !Ref ReportsBucket
+      RESEND_API_KEY: ${env:RESEND_API_KEY}
+    timeout: 25
+    events:
+      - httpApi:
+          path: /populate-dynamo
+          method: POST
+  generateReport:
+    role: live039Role
+    handler: src/lives/039/lambdas/http/generateReport.handler
+    environment:
+      DYNAMO_LEADS_TABLE: !Ref LeadsTable
+      GENERATE_REPORT_QUEUE_URL: !Ref GenerateReportQueue
+      REPORTS_BUCKET_NAME: !Ref ReportsBucket
+      RESEND_API_KEY: ${env:RESEND_API_KEY}
+    events:
+      - httpApi:
+          path: /generate-report
+          method: POST
+  processReport:
+    role: live039Role
+    handler: src/lives/039/lambdas/queues/processReport.handler
+    environment:
+      DYNAMO_LEADS_TABLE: !Ref LeadsTable
+      GENERATE_REPORT_QUEUE_URL: !Ref GenerateReportQueue
+      REPORTS_BUCKET_NAME: !Ref ReportsBucket
+      RESEND_API_KEY: ${env:RESEND_API_KEY}
+    timeout: 180
+    memorySize: 512
+    events:
+      - sqs:
+          arn: !GetAtt GenerateReportQueue.Arn
+          batchSize: 1
+
+resources:
+  Resources:
+    LeadsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: LeadsTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
+    ReportsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: live039-reports-bucket-lucas
+        LifecycleConfiguration:
+          Rules:
+            - Id: auto-delete-after-1-day
+              Status: Enabled
+              ExpirationInDays: 1
+            - Id: auto-delete-mpus-after-1-day
+              Status: Enabled
+              AbortIncompleteMultipartUpload:
+                DaysAfterInitiation: 1
+
+    GenerateReportQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: GenerateReport
+        ReceiveMessageWaitTimeSeconds: 20
+        VisibilityTimeout: 180
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt GenerateReportDLQ.Arn
+          maxReceiveCount: 2
+
+    GenerateReportDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: GenerateReportDLQ
+        MessageRetentionPeriod: 1209600 # 14 days
+
+    live039Role:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: live039Role
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: live039Policy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                # DynamoDB
+                - Effect: Allow
+                  Action:
+                    - dynamodb:PutItem
+                    - dynamodb:Scan
+                  Resource: !GetAtt LeadsTable.Arn
+                # SQS
+                - Effect: Allow
+                  Action:
+                    - sqs:SendMessage
+                    - sqs:ReceiveMessage
+                    - sqs:DeleteMessage
+                    - sqs:GetQueueAttributes
+                  Resource: !GetAtt GenerateReportQueue.Arn
+                # S3
+                - Effect: Allow
+                  Action:
+                    - s3:PutObject
+                    - s3:AbortMultipartUpload
+                    - s3:GetObject
+                  Resource:
+                    - !GetAtt ReportsBucket.Arn
+                    - !Join ['/', [!GetAtt ReportsBucket.Arn, '*']]

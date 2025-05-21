@@ -1,7 +1,7 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import type { S3Event } from 'aws-lambda';
 
-import { dynamoClient } from '@libs/dynamoClient';
+import { dynamoDocClient } from '@libs/dynamoClient';
 
 const { UPLOAD_FILE_TABLE } = process.env;
 
@@ -23,5 +23,5 @@ export async function handler(event: S3Event) {
     });
   });
 
-  await Promise.all(commands.map((command) => dynamoClient.send(command)));
+  await Promise.all(commands.map((command) => dynamoDocClient.send(command)));
 }

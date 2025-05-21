@@ -25,6 +25,8 @@
   ],
   "plugins": ["@typescript-eslint"],
   "rules": {
+    "no-restricted-syntax": "off",
+    "no-continue": "off",
     "prettier/prettier": "error",
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/explicit-function-return-type": "off",

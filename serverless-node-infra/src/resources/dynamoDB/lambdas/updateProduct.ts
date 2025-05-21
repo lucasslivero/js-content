@@ -1,7 +1,7 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 
-import { dynamoClient } from '@libs/dynamoClient';
+import { dynamoDocClient } from '@libs/dynamoClient';
 import { bodyParser } from '@utils/bodyParser';
 import { response } from '@utils/response';
 
@@ -30,7 +30,7 @@ export async function handler(event: APIGatewayProxyEventV2) {
     },
   });
 
-  await dynamoClient.send(command);
+  await dynamoDocClient.send(command);
 
   return response(204);
 }

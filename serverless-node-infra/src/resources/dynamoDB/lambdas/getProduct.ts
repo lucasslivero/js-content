@@ -1,7 +1,7 @@
 import { GetCommand } from '@aws-sdk/lib-dynamodb';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 
-import { dynamoClient } from '@libs/dynamoClient';
+import { dynamoDocClient } from '@libs/dynamoClient';
 import { response } from '@utils/response';
 
 const { PRODUCTS_TABLE } = process.env;
@@ -16,7 +16,7 @@ export async function handler(event: APIGatewayProxyEventV2) {
     },
   });
 
-  const { Item } = await dynamoClient.send(command);
+  const { Item } = await dynamoDocClient.send(command);
 
   if (!Item) {
     return response(404, { error: 'Product not found .' });

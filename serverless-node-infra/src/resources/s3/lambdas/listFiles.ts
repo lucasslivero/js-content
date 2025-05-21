@@ -1,7 +1,7 @@
 import { ListMultipartUploadsCommand } from '@aws-sdk/client-s3';
 import { ScanCommand } from '@aws-sdk/lib-dynamodb';
 
-import { dynamoClient } from '@libs/dynamoClient';
+import { dynamoDocClient } from '@libs/dynamoClient';
 import { s3Client } from '@libs/s3Client';
 import { response } from '@utils/response';
 
@@ -13,7 +13,7 @@ export async function handler() {
       TableName: UPLOAD_FILE_TABLE,
     });
 
-    const { Items } = await dynamoClient.send(command);
+    const { Items } = await dynamoDocClient.send(command);
 
     const commandS3 = new ListMultipartUploadsCommand({
       Bucket: FILE_UPLOAD_BUCKET,

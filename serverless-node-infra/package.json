@@ -23,7 +23,9 @@
     "@aws-sdk/client-sqs": "^3.744.0",
     "@aws-sdk/credential-providers": "^3.744.0",
     "@aws-sdk/lib-dynamodb": "^3.744.0",
-    "@aws-sdk/s3-request-presigner": "^3.744.0"
+    "@aws-sdk/s3-request-presigner": "^3.744.0",
+    "@faker-js/faker": "^9.8.0",
+    "resend": "^4.5.1"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.147",

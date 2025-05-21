@@ -1,6 +1,6 @@
 import { ScanCommand } from '@aws-sdk/lib-dynamodb';
 
-import { dynamoClient } from '@libs/dynamoClient';
+import { dynamoDocClient } from '@libs/dynamoClient';
 import { response } from '@utils/response';
 
 const { PRODUCTS_TABLE } = process.env;
@@ -10,7 +10,7 @@ export async function handler() {
     TableName: PRODUCTS_TABLE,
   });
 
-  const { Items } = await dynamoClient.send(command);
+  const { Items } = await dynamoDocClient.send(command);
 
   return response(200, Items);
 }

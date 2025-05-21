@@ -20,7 +20,8 @@
     "paths": {
       "@functions/*": ["src/lambdas/*"],
       "@libs/*": ["src/libs/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@config/*": ["src/config/*"]
     }
   },
   "include": ["src/**/*.ts"],

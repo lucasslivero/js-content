@@ -1,7 +1,7 @@
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import type { SQSBatchItemFailure, SQSBatchResponse, SQSEvent } from 'aws-lambda';
 
-import { dynamoClient } from '@libs/dynamoClient';
+import { dynamoDocClient } from '@libs/dynamoClient';
 import { bodyParser } from '@utils/bodyParser';
 
 const { PAYMENTS_TABLE } = process.env;
@@ -16,7 +16,7 @@ export async function handler(event: SQSEvent): Promise<SQSBatchResponse> {
         message: bodyItem.message,
       },
     });
-    return dynamoClient.send(command);
+    return dynamoDocClient.send(command);
   });
   const responses = await Promise.allSettled(commands);
   const batchItemFailures: SQSBatchItemFailure[] = [];

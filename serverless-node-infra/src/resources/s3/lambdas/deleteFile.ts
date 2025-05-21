@@ -2,7 +2,7 @@ import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { DeleteCommand } from '@aws-sdk/lib-dynamodb';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 
-import { dynamoClient } from '@libs/dynamoClient';
+import { dynamoDocClient } from '@libs/dynamoClient';
 import { s3Client } from '@libs/s3Client';
 import { response } from '@utils/response';
 
@@ -26,7 +26,7 @@ export async function handler(event: APIGatewayProxyEventV2) {
       },
     });
 
-    await dynamoClient.send(command);
+    await dynamoDocClient.send(command);
     return response(204);
   } catch (error: any) {
     return response(400, error);

@@ -34,11 +34,14 @@ custom:
       noStart: true
   environment:
     # # Cognito # #
+    # - ${file(src/resources/cognito/serverless.yml):environment}
     # COGNITO_CLIENT_ID: !Ref UserPoolClient
     # COGNITO_POOL_ID: !Ref UserPool
     # # DynamoDB # #
+    # - ${file(src/resources/dynamoDB/serverless.yml):environment}
     # PRODUCTS_TABLE: !Ref ProductsTable
     # # S3 # #
+    # - ${file(src/resources/s3/serverless.yml):environment}
     # UPLOAD_FILE_TABLE: !Ref UploadedFilesTable
     # FILE_UPLOAD_BUCKET: !Ref FileUploaderBucket
 
@@ -46,7 +49,7 @@ provider:
   name: aws
   runtime: nodejs20.x
   stage: ${opt:stage, 'dev'}
-  # profile: app
+  profile: app
   timeout: 10 # optional, in seconds, default is 6
   region: us-east-1
   httpApi:
@@ -61,7 +64,7 @@ provider:
     #       - !Ref UserPoolClient
 
   environment:
-    DEBUG: ${env:DEBUG, false}
+    DEBUG: ${opt:stage, env:DEBUG}
     STAGE: ${self:provider.stage}
 
 functions:
@@ -69,12 +72,14 @@ functions:
   # - ${file(src/resources/dynamoDB/serverless.yml):functions}
   # - ${file(src/resources/s3/serverless.yml):functions}
   # - ${file(src/resources/sqs/serverless.yml):functions}
+  - ${file(src/lives/039/serverless.yml):functions}
 
 resources:
   # - ${file(src/resources/cognito/serverless.yml):resources}
   # - ${file(src/resources/dynamoDB/serverless.yml):resources}
   # - ${file(src/resources/s3/serverless.yml):resources}
   # - ${file(src/resources/sqs/serverless.yml):resources}
+  - ${file(src/lives/039/serverless.yml):resources}
   - Resources:
       CloudWatchPolicy:
         Type: AWS::IAM::Policy
@@ -100,3 +105,4 @@ resources:
             # - Ref: S3UploadRole
             # - Ref: DynamoDBRole
             # - Ref: CognitoRole
+            - Ref: live039Role

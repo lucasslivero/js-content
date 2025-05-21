@@ -10,7 +10,7 @@ import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 
-import { dynamoClient } from '@libs/dynamoClient';
+import { dynamoDocClient } from '@libs/dynamoClient';
 import { s3Client } from '@libs/s3Client';
 import { bodyParser } from '@utils/bodyParser';
 import { response } from '@utils/response';
@@ -45,7 +45,7 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
         },
       });
 
-      await dynamoClient.send(command);
+      await dynamoDocClient.send(command);
 
       return response(200, { signedURL });
     }
@@ -95,7 +95,7 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
         },
       });
 
-      await dynamoClient.send(command);
+      await dynamoDocClient.send(command);
 
       const urls = await Promise.all(signedURLPromises);
       return response(200, {
