@@ -24,6 +24,7 @@ export function HookformDynamicPage() {
   const [draggingIndex, setDraggingIndex] = useState<null | number>(null);
 
   const handleSubmit = form.handleSubmit((formData) => {
+    // eslint-disable-next-line no-console
     console.log(formData);
   });
 

@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Control, FieldPath, FieldValues, useController } from 'react-hook-form';
+import { type Control, type FieldPath, type FieldValues, useController } from 'react-hook-form';
 
 import { Switch } from '@/components/ui/Switch';
 

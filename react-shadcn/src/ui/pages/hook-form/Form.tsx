@@ -5,7 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { IUserForm } from '@/app/types/IUserForm';
+import { type IUserForm } from '@/app/types/IUserForm';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { sleep } from '@/app/libs/utils';
-import { IUserForm } from '@/app/types/IUserForm';
+import { type IUserForm } from '@/app/types/IUserForm';
 
 import { Form } from './Form';
 

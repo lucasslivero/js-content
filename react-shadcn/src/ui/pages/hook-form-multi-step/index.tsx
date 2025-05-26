@@ -53,6 +53,7 @@ export function HookformMultiStepPage() {
   }, [form]);
 
   const handleSubmit = form.handleSubmit(async (formData) => {
+    // eslint-disable-next-line no-console
     console.log('Enviando para a API:', formData);
 
     await sleep(2000);

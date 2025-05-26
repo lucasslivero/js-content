@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { updateUser } from '../services/updateUser';
-import { IUser } from '../types/IUser';
+import { type IUser } from '../types/IUser';
 
 import { USERS_QUERY_KEY } from './useUsers';
 

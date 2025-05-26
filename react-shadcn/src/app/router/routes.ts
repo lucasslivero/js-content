@@ -1,10 +1,11 @@
-import { History, Settings2, Star } from 'lucide-react';
+import { History, Settings2, Star, Store } from 'lucide-react';
 import { lazy } from 'react';
 
 import { ErrorBoundaryPage } from '@/ui/pages/error-boundary';
 import { HookformPage } from '@/ui/pages/hook-form';
 import { HookformDynamicPage } from '@/ui/pages/hook-form-dynamic';
 import { HookformMultiStepPage } from '@/ui/pages/hook-form-multi-step';
+import ZustandPage from '@/ui/pages/zustand';
 
 const FileUploaderPage = lazy(() => import('@/ui/pages/file-uploader'));
 const OptimisticUpdatePage = lazy(() => import('@/ui/pages/optimistic-updates'));
@@ -75,5 +76,12 @@ export const ROUTE_LINKS = [
     icon: Settings2,
     description: 'Hook form multi step Page for multi step forms',
     Element: HookformMultiStepPage,
+  },
+  {
+    title: 'Zustand',
+    url: '/zustand',
+    icon: Store,
+    description: 'Zustand with middlewares',
+    Element: ZustandPage,
   },
 ];
