@@ -15,12 +15,12 @@ $ yarn start:dev # For Live Reloading (automatically refresh the functions)
 
 ### First Steps
 
-- Install all packages: `yarn install `
+- Install all packages: `yarn install`
 - Install dynamoDB Local with docker or locally in your machine
 
 ### Docker S3 Local
 
-https://github.com/ar90n/serverless-s3-local
+<https://github.com/ar90n/serverless-s3-local>
 In order to create s3 instance:
 
 ### Docker DynamoDB Local
@@ -28,7 +28,15 @@ In order to create s3 instance:
 In order to create dynamoDB instance:
 
 ```bash
-$ docker run -p 8000:8000 --name dynamoDB -d amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb -inMemory
+docker run -p 8000:8000 --name dynamoDB -d amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb -inMemory
+```
+
+### Docker mongo Local
+
+In order to create dynamoDB instance:
+
+```bash
+docker run -d --name mongoDB -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=admin mongo
 ```
 
 ### Deployment
@@ -36,11 +44,11 @@ $ docker run -p 8000:8000 --name dynamoDB -d amazon/dynamodb-local -jar DynamoDB
 In order to deploy:
 
 ```bash
-$ serverless deploy
+serverless deploy
 ```
 
 In order to remove everything:
 
 ```bash
-$ serverless remove
+serverless remove
 ```

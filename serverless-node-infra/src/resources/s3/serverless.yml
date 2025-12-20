@@ -1,6 +1,6 @@
 environment:
   UPLOAD_FILE_TABLE: !Ref UploadedFilesTable
-  FILE_UPLOAD_BUCKET: !Ref FileUploaderBucketQ
+  FILE_UPLOAD_BUCKET: !Ref FileUploaderBucket
 
 functions:
   s3GetPresignedURL:
@@ -12,6 +12,16 @@ functions:
     events:
       - httpApi:
           path: /s3/getPresignedURL
+          method: POST
+  s3GetPresignedPostURL:
+    role: S3UploadRole
+    handler: src/resources/s3/lambdas/getPresignedBatchPOST.handler
+    environment:
+      UPLOAD_FILE_TABLE: ${env:UPLOAD_FILE_TABLE, self:custom.environment.UPLOAD_FILE_TABLE}
+      FILE_UPLOAD_BUCKET: ${env:FILE_UPLOAD_BUCKET, self:custom.environment.FILE_UPLOAD_BUCKET}
+    events:
+      - httpApi:
+          path: /s3/getPresignedBatchPOST
           method: POST
   s3ListFiles:
     role: S3UploadRole
@@ -79,7 +89,7 @@ resources:
     FileUploaderBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: serverless-node-infra-uploaded-files
+        BucketName: lucas-serverless-uploaded-files
         PublicAccessBlockConfiguration:
           BlockPublicAcls: true
           BlockPublicPolicy: true
@@ -93,6 +103,7 @@ resources:
               AllowedMethods:
                 - GET
                 - PUT
+                - POST
               AllowedOrigins:
                 - '*'
               MaxAge: 3600

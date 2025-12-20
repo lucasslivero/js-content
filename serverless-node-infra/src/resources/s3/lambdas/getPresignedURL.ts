@@ -7,6 +7,7 @@ import {
   UploadPartCommand,
 } from '@aws-sdk/client-s3';
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 
@@ -18,7 +19,7 @@ import { response } from '@utils/response';
 const { UPLOAD_FILE_TABLE, FILE_UPLOAD_BUCKET } = process.env;
 
 export async function handler(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const { filename, type, totalChunks } = bodyParser(event.body);
+  const { filename, type, totalChunks, size } = bodyParser(event.body);
 
   if (!filename || !type) {
     return response(400, { error: 'File name is required.' });
@@ -106,6 +107,37 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
           partNumber: index + 1,
         })),
       });
+    }
+    if (type === 'POST') {
+      const MB_IN_BYTES = 1024 * 1024;
+      if (size > MB_IN_BYTES) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            error: 'The file should have up to 1MB.',
+          }),
+        };
+      }
+
+      const fileKey = `${randomUUID()}-${filename}`;
+
+      const { url, fields } = await createPresignedPost(s3Client, {
+        Bucket: FILE_UPLOAD_BUCKET!,
+        Key: fileKey,
+        Expires: 600,
+        Conditions: [['content-length-range', size, size], { 'Content-Type': type }],
+        Fields: {
+          'Content-Type': type,
+        },
+      });
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          url,
+          fields,
+        }),
+      };
     }
   } catch (error: any) {
     return response(400, error);

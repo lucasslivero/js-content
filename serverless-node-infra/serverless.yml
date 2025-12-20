@@ -47,7 +47,7 @@ custom:
 
 provider:
   name: aws
-  runtime: nodejs20.x
+  runtime: nodejs22.x
   stage: ${opt:stage, 'dev'}
   profile: app
   timeout: 10 # optional, in seconds, default is 6
@@ -64,22 +64,22 @@ provider:
     #       - !Ref UserPoolClient
 
   environment:
-    DEBUG: ${opt:stage, env:DEBUG}
+    DEBUG: ${opt:debug, env:DEBUG}
     STAGE: ${self:provider.stage}
 
 functions:
   # - ${file(src/resources/cognito/serverless.yml):functions}
   # - ${file(src/resources/dynamoDB/serverless.yml):functions}
-  # - ${file(src/resources/s3/serverless.yml):functions}
+  - ${file(src/resources/s3/serverless.yml):functions}
   # - ${file(src/resources/sqs/serverless.yml):functions}
-  - ${file(src/lives/039/serverless.yml):functions}
+  # - ${file(src/lives/039/serverless.yml):functions}
 
 resources:
   # - ${file(src/resources/cognito/serverless.yml):resources}
   # - ${file(src/resources/dynamoDB/serverless.yml):resources}
-  # - ${file(src/resources/s3/serverless.yml):resources}
+  - ${file(src/resources/s3/serverless.yml):resources}
   # - ${file(src/resources/sqs/serverless.yml):resources}
-  - ${file(src/lives/039/serverless.yml):resources}
+  # - ${file(src/lives/039/serverless.yml):resources}
   - Resources:
       CloudWatchPolicy:
         Type: AWS::IAM::Policy
@@ -102,7 +102,7 @@ resources:
                         - Ref: 'AWS::AccountId'
                         - 'log-group:/aws/lambda/*:*:*'
           Roles:
-            # - Ref: S3UploadRole
+            - Ref: S3UploadRole
             # - Ref: DynamoDBRole
             # - Ref: CognitoRole
-            - Ref: live039Role
+            # - Ref: live039Role
