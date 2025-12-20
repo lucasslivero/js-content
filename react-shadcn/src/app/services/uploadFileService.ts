@@ -50,6 +50,11 @@ type CompleteMPUParams = {
   }[];
 };
 
+type GetPresignedPostResponse = {
+  url: string;
+  fields: Record<string, string>;
+};
+
 export class UploadFileService {
   static async getPresignedUrl(filename: string, type: signedURLType) {
     const { data } = await httpClient.post<{ signedURL: string }>('/s3/getPresignedURL', {
@@ -134,5 +139,35 @@ export class UploadFileService {
         uploadId,
       },
     });
+  }
+
+  static async uploadBatchFiles(files: File[]) {
+    const { data } = await httpClient.post<GetPresignedPostResponse>('/s3/getPresignedBatchPOST', {
+      files: files.map((file) => ({
+        name: file.name,
+        type: file.type,
+        size: file.size,
+      })),
+    });
+
+    const { url, fields } = data;
+    delete fields.key;
+
+    await Promise.allSettled(
+      files.map(async (file) => {
+        const formData = new FormData();
+        const fileKey = `user1/${window.crypto.randomUUID()}-${file.name}`;
+
+        Object.entries(fields).forEach(([key, value]) => {
+          formData.append(key, value);
+        });
+
+        formData.append('key', fileKey);
+        formData.append('Content-Type', file.type);
+        formData.append('file', file);
+
+        await axios.post(url, formData);
+      }),
+    );
   }
 }

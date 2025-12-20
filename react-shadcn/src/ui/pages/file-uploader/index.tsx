@@ -5,7 +5,7 @@ import { useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
 
 import { bytesToMb, cn, mbToBytes } from '@/app/libs/utils';
-import { IFile, UploadFileService } from '@/app/services/uploadFileService';
+import { type IFile, UploadFileService } from '@/app/services/uploadFileService';
 import { Button } from '@/components/ui/Button';
 import {
   Dialog,

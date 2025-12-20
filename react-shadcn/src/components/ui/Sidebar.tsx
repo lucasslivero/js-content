@@ -1,8 +1,8 @@
 import { PanelLeft } from 'lucide-react';
 import {
-  ComponentProps,
+  type ComponentProps,
   createContext,
-  CSSProperties,
+  type CSSProperties,
   forwardRef,
   useCallback,
   useContext,

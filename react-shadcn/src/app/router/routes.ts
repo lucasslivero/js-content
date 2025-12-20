@@ -2,6 +2,7 @@ import { History, Settings2, Star, Store } from 'lucide-react';
 import { lazy } from 'react';
 
 import { ErrorBoundaryPage } from '@/ui/pages/error-boundary';
+import { FileUploaderPostPage } from '@/ui/pages/file-uploader-post';
 import { HookformPage } from '@/ui/pages/hook-form';
 import { HookformDynamicPage } from '@/ui/pages/hook-form-dynamic';
 import { HookformMultiStepPage } from '@/ui/pages/hook-form-multi-step';
@@ -20,6 +21,13 @@ export const ROUTE_LINKS = [
     icon: History,
     description: 'File Uploader Page',
     Element: FileUploaderPage,
+  },
+  {
+    title: 'File Uploader Post',
+    url: '/file-uploader-post',
+    icon: History,
+    description: 'File Uploader Page',
+    Element: FileUploaderPostPage,
   },
   {
     title: 'Optimistic Updates',
